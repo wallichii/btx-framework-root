@@ -1,5 +1,7 @@
 package top.cheesetree.btx.framework.security.shiro.config;
 
+import jakarta.servlet.DispatcherType;
+import jakarta.servlet.Filter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.Authenticator;
 import org.apache.shiro.authc.pam.FirstSuccessfulStrategy;
@@ -39,8 +41,6 @@ import top.cheesetree.btx.framework.security.shiro.support.cas.BtxSecurityCasAut
 import top.cheesetree.btx.framework.security.shiro.support.cas.BtxSecurityShiroCasFilter;
 import top.cheesetree.btx.framework.security.shiro.support.cas.BtxShiroCasProperties;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
 import java.util.*;
 
 /**

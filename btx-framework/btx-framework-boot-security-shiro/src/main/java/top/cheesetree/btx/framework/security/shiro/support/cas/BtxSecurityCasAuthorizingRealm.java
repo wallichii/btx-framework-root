@@ -1,6 +1,8 @@
 package top.cheesetree.btx.framework.security.shiro.support.cas;
 
 import com.alibaba.fastjson2.JSON;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationInfo;
@@ -11,11 +13,11 @@ import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
-import org.jasig.cas.client.Protocol;
-import org.jasig.cas.client.authentication.AttributePrincipal;
-import org.jasig.cas.client.authentication.AttributePrincipalImpl;
-import org.jasig.cas.client.util.CommonUtils;
-import org.jasig.cas.client.validation.*;
+import org.apereo.cas.client.Protocol;
+import org.apereo.cas.client.authentication.AttributePrincipal;
+import org.apereo.cas.client.authentication.AttributePrincipalImpl;
+import org.apereo.cas.client.util.WebUtils;
+import org.apereo.cas.client.validation.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.util.StringUtils;
@@ -27,15 +29,13 @@ import top.cheesetree.btx.framework.security.model.SecurityRoleDTO;
 import top.cheesetree.btx.framework.security.shiro.matcher.BtxNoAuthCredentialsMatcher;
 import top.cheesetree.btx.framework.security.shiro.model.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 /**
  * @author van
- * @date 2022/2/21 09:20
+ * @date 2022/2/21 09:2
  * @description TODO
  */
 
@@ -155,7 +155,7 @@ public class BtxSecurityCasAuthorizingRealm extends AuthorizingRealm {
 
         if (StringUtils.hasText(ticket) && !btxShiroCasProperties.getSkipTicketValidation()) {
             try {
-                Assertion casAssertion = ticketValidator.validate(ticket, CommonUtils.constructServiceUrl(request,
+                Assertion casAssertion = ticketValidator.validate(ticket, WebUtils.constructServiceUrl(request,
                         response, null, this.serverName, this.protocol.getServiceParameterName(),
                         this.protocol.getArtifactParameterName(), true));
                 casPrincipal = casAssertion.getPrincipal();

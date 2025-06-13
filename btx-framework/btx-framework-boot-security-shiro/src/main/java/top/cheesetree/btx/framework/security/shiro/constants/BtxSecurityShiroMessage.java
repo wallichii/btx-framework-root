@@ -1,6 +1,5 @@
 package top.cheesetree.btx.framework.security.shiro.constants;
 
-import top.cheesetree.btx.framework.core.constants.BtxMessage;
 import top.cheesetree.btx.framework.security.constants.BtxSecurityMessage;
 
 /**

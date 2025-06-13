@@ -20,22 +20,22 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!--spring framewwork-->
-        <spring-boot.version>2.7.18</spring-boot.version>
+        <spring-boot.version>3.5.0</spring-boot.version>
         <!--spring framewwork-->
 
         <lombok.version>1.18.38</lombok.version>
-        <com.alibaba.fastjson2.version>2.0.56</com.alibaba.fastjson2.version>
-        <mybatis-plus-boot.version>3.5.10.1</mybatis-plus-boot.version>
-        <cn.hutool.version>5.8.36</cn.hutool.version>
-        <org.apache.shiro.version>1.13.0</org.apache.shiro.version>
+        <com.alibaba.fastjson2.version>2.0.57</com.alibaba.fastjson2.version>
+        <mybatis-plus-boot.version>3.5.12</mybatis-plus-boot.version>
+        <cn.hutool.version>5.8.38</cn.hutool.version>
+        <org.apache.shiro.version>2.0.4</org.apache.shiro.version>
         <org.jasig.cas.client.version>3.6.4</org.jasig.cas.client.version>
         <com.fasterxml.jackson.version>2.13.5</com.fasterxml.jackson.version>
         <okhttp.version>4.12.0</okhttp.version>
-        <org.yaml.snakeyaml.version>1.33</org.yaml.snakeyaml.version>
+        <org.yaml.snakeyaml.version>2.4</org.yaml.snakeyaml.version>
         <tomcat.embed.version>9.0.104</tomcat.embed.version>
-        <logback.version>1.2.13</logback.version>
+        <logback.version>1.5.18</logback.version>
         <netty.version>4.1.121.Final</netty.version>
-        <bcprov.jdk18on.version>1.78.1</bcprov.jdk18on.version>
+        <bcprov.jdk18on.version>1.81</bcprov.jdk18on.version>
     </properties>
 
     <dependencyManagement>
@@ -66,13 +66,8 @@
             </dependency>
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
-                <artifactId>fastjson2-extension-spring5</artifactId>
+                <artifactId>fastjson2-extension-spring6</artifactId>
                 <version>${com.alibaba.fastjson2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>top.cheesetree.btx.common</groupId>
-                <artifactId>btx-common-crypto</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.baomidou</groupId>
@@ -90,19 +85,21 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.shiro</groupId>
-                <artifactId>shiro-spring-boot-starter</artifactId>
+                <artifactId>shiro-bom</artifactId>
                 <version>${org.apache.shiro.version}</version>
+                <scope>import</scope>
+                <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>org.jasig.cas.client</groupId>
-                <artifactId>cas-client-support-saml</artifactId>
-                <version>${org.jasig.cas.client.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.fasterxml.jackson.core</groupId>
-                <artifactId>jackson-databind</artifactId>
-                <version>${com.fasterxml.jackson.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.jasig.cas.client</groupId>-->
+<!--                <artifactId>cas-client-support-saml</artifactId>-->
+<!--                <version>${org.jasig.cas.client.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>com.fasterxml.jackson.core</groupId>-->
+<!--                <artifactId>jackson-databind</artifactId>-->
+<!--                <version>${com.fasterxml.jackson.version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
@@ -113,21 +110,21 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>${org.yaml.snakeyaml.version}</version>
             </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat.embed.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-websocket</artifactId>
-                <version>${tomcat.embed.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-el</artifactId>
-                <version>${tomcat.embed.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tomcat.embed</groupId>-->
+<!--                <artifactId>tomcat-embed-core</artifactId>-->
+<!--                <version>${tomcat.embed.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tomcat.embed</groupId>-->
+<!--                <artifactId>tomcat-embed-websocket</artifactId>-->
+<!--                <version>${tomcat.embed.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>org.apache.tomcat.embed</groupId>-->
+<!--                <artifactId>tomcat-embed-el</artifactId>-->
+<!--                <version>${tomcat.embed.version}</version>-->
+<!--            </dependency>-->
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
@@ -143,46 +140,46 @@
                 <artifactId>bcpkix-jdk18on</artifactId>
                 <version>${bcprov.jdk18on.version}</version>
             </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-common</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-handler</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec-http</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-transport</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-resolver</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-transport-native-unix-common</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-buffer</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>io.netty</groupId>
-                <artifactId>netty-codec</artifactId>
-                <version>${netty.version}</version>
-            </dependency>
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-common</artifactId>-->
+<!--                <version>${netty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-handler</artifactId>-->
+<!--                <version>${netty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-codec-http</artifactId>-->
+<!--                <version>${netty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-transport</artifactId>-->
+<!--                <version>${netty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-resolver</artifactId>-->
+<!--                <version>${netty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-transport-native-unix-common</artifactId>-->
+<!--                <version>${netty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-buffer</artifactId>-->
+<!--                <version>${netty.version}</version>-->
+<!--            </dependency>-->
+<!--            <dependency>-->
+<!--                <groupId>io.netty</groupId>-->
+<!--                <artifactId>netty-codec</artifactId>-->
+<!--                <version>${netty.version}</version>-->
+<!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 </project>

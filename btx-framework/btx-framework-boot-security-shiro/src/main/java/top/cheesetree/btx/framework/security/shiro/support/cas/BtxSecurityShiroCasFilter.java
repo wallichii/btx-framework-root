@@ -3,6 +3,10 @@ package top.cheesetree.btx.framework.security.shiro.support.cas;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
+import jakarta.servlet.ServletRequest;
+import jakarta.servlet.ServletResponse;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -17,10 +21,6 @@ import top.cheesetree.btx.framework.security.constants.BtxSecurityMessage;
 import top.cheesetree.btx.framework.security.shiro.constants.BtxSecurityShiroConst;
 import top.cheesetree.btx.framework.web.util.RequestUtil;
 
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;

@@ -2,7 +2,7 @@ package top.cheesetree.btx.framework.cache.redis;
 
 import com.alibaba.fastjson2.JSONFactory;
 import com.alibaba.fastjson2.PropertyNamingStrategy;
-import com.alibaba.fastjson2.support.spring.data.redis.GenericFastJsonRedisSerializer;
+import com.alibaba.fastjson2.support.spring6.data.redis.GenericFastJsonRedisSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.cache.CacheProperties;

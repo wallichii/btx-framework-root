@@ -18,7 +18,7 @@
     <packaging>jar</packaging>
 
     <properties>
-
+        <org.apereo.cas.version>4.0.4</org.apereo.cas.version>
     </properties>
 
     <dependencies>
@@ -31,31 +31,29 @@
             <groupId>top.cheesetree.btx.framework</groupId>
         </dependency>
         <dependency>
+            <groupId>org.apereo.cas.client</groupId>
+            <artifactId>cas-client-support-saml</artifactId>
+            <version>${org.apereo.cas.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.apache.shiro</groupId>
             <artifactId>shiro-spring-boot-starter</artifactId>
+            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
-            <groupId>org.jasig.cas.client</groupId>
-            <artifactId>cas-client-support-saml</artifactId>
-            <scope>compile</scope>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.fasterxml.jackson.core</groupId>
-                    <artifactId>jackson-databind</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcpkix-jdk15on</artifactId>
-                </exclusion>
-            </exclusions>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-core</artifactId>
+            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcpkix-jdk18on</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-web</artifactId>
+            <classifier>jakarta</classifier>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <classifier>jakarta</classifier>
         </dependency>
     </dependencies>
 

@@ -1,10 +1,10 @@
 package top.cheesetree.btx.framework.web.util;
 
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author van

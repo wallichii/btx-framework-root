@@ -17,7 +17,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>btx-scheduler</module>
-        <module>btx-mail</module>
         <module>btx-dts</module>
         <module>btx-nacos</module>
     </modules>

@@ -72,11 +72,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>top.cheesetree.btx.common</groupId>
-                <artifactId>btx-common-lang</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <artifactId>btx-scheduler-xxl</artifactId>
                 <groupId>top.cheesetree.btx.project.scheduler</groupId>
                 <version>${project.version}</version>

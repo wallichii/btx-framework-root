@@ -3,7 +3,7 @@ package top.cheesetree.btx.project.dts.dtm.client.common.config;
 
 import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.support.config.FastJsonConfig;
-import com.alibaba.fastjson2.support.spring.http.converter.FastJsonHttpMessageConverter;
+import com.alibaba.fastjson2.support.spring6.http.converter.FastJsonHttpMessageConverter;
 import okhttp3.ConnectionPool;
 import okhttp3.OkHttpClient;
 import org.mybatis.spring.annotation.MapperScan;
@@ -42,7 +42,7 @@ public class BtxDtmConfigure {
         List<HttpMessageConverter<?>> converters = restTemplate.getMessageConverters();
 
         FastJsonHttpMessageConverter fastConverter = new FastJsonHttpMessageConverter();
-        List<MediaType> supportedMediaTypes = new ArrayList<>();
+        List<MediaType> supportedMediaTypes = new ArrayList<MediaType>();
         supportedMediaTypes.add(MediaType.APPLICATION_JSON);
         supportedMediaTypes.add(MediaType.APPLICATION_FORM_URLENCODED);
         supportedMediaTypes.add(MediaType.APPLICATION_OCTET_STREAM);

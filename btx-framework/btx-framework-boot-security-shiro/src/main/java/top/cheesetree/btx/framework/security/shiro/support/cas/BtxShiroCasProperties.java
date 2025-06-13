@@ -2,7 +2,7 @@ package top.cheesetree.btx.framework.security.shiro.support.cas;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.jasig.cas.client.Protocol;
+import org.apereo.cas.client.Protocol;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**

@@ -3,6 +3,7 @@ package top.cheesetree.btx.framework.security.shiro.config;
 
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONValidator;
+import jakarta.servlet.http.HttpServletResponse;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authz.AuthorizationException;
 import org.apache.shiro.authz.UnauthenticatedException;
@@ -16,8 +17,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import top.cheesetree.btx.framework.core.json.CommJSON;
 import top.cheesetree.btx.framework.security.constants.BtxSecurityMessage;
-
-import javax.servlet.http.HttpServletResponse;
 
 /**
  * @Author: van
