@@ -15,7 +15,7 @@
 
     <properties>
         <nacos.client.version>3.0.1</nacos.client.version>
-        <nacos.springboot.version>0.2.12</nacos.springboot.version>
+        <nacos.springboot.version>0.3.1-SNAPSHOT</nacos.springboot.version>
     </properties>
 
     <dependencies>
@@ -23,17 +23,6 @@
             <groupId>com.alibaba.boot</groupId>
             <artifactId>nacos-config-spring-boot-starter</artifactId>
             <version>${nacos.springboot.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.alibaba.nacos</groupId>
-                    <artifactId>nacos-client</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.alibaba.nacos</groupId>
-            <artifactId>nacos-client</artifactId>
-            <version>${nacos.client.version}</version>
         </dependency>
     </dependencies>
 </project>

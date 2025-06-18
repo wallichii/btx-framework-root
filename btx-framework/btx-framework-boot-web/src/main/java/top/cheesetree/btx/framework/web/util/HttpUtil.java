@@ -48,6 +48,10 @@ public class HttpUtil {
         return httpPost(url, pa, headers, DEF_TIMEOUT, isHttps);
     }
 
+    public static String httpPostJson(String url, HashMap<String, String> headers, String pa,int to, boolean isHttps) {
+        return httpPost(url, pa, headers, to, isHttps);
+    }
+
     public static String httpPostJson(String url, String pa, int to, boolean isHttps) {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
