@@ -21,6 +21,7 @@
 
         <!--spring framewwork-->
         <spring-boot.version>3.5.0</spring-boot.version>
+        <spring.version>6.2.8</spring.version>
         <!--spring framewwork-->
 
         <lombok.version>1.18.38</lombok.version>
@@ -32,14 +33,22 @@
         <com.fasterxml.jackson.version>2.13.5</com.fasterxml.jackson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <org.yaml.snakeyaml.version>2.4</org.yaml.snakeyaml.version>
-        <tomcat.embed.version>9.0.104</tomcat.embed.version>
+        <tomcat.embed.version>10.1.42</tomcat.embed.version>
         <logback.version>1.5.18</logback.version>
         <netty.version>4.1.121.Final</netty.version>
         <bcprov.jdk18on.version>1.81</bcprov.jdk18on.version>
+        <commons-beanutils.version>1.11.0</commons-beanutils.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-framework-bom</artifactId>
+                <version>${spring.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
@@ -90,16 +99,16 @@
                 <scope>import</scope>
                 <type>pom</type>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.jasig.cas.client</groupId>-->
-<!--                <artifactId>cas-client-support-saml</artifactId>-->
-<!--                <version>${org.jasig.cas.client.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>com.fasterxml.jackson.core</groupId>-->
-<!--                <artifactId>jackson-databind</artifactId>-->
-<!--                <version>${com.fasterxml.jackson.version}</version>-->
-<!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>org.jasig.cas.client</groupId>-->
+            <!--                <artifactId>cas-client-support-saml</artifactId>-->
+            <!--                <version>${org.jasig.cas.client.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>com.fasterxml.jackson.core</groupId>-->
+            <!--                <artifactId>jackson-databind</artifactId>-->
+            <!--                <version>${com.fasterxml.jackson.version}</version>-->
+            <!--            </dependency>-->
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
@@ -110,21 +119,21 @@
                 <artifactId>snakeyaml</artifactId>
                 <version>${org.yaml.snakeyaml.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>org.apache.tomcat.embed</groupId>-->
-<!--                <artifactId>tomcat-embed-core</artifactId>-->
-<!--                <version>${tomcat.embed.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.tomcat.embed</groupId>-->
-<!--                <artifactId>tomcat-embed-websocket</artifactId>-->
-<!--                <version>${tomcat.embed.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>org.apache.tomcat.embed</groupId>-->
-<!--                <artifactId>tomcat-embed-el</artifactId>-->
-<!--                <version>${tomcat.embed.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.embed.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.embed.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.embed.version}</version>
+            </dependency>
             <dependency>
                 <groupId>ch.qos.logback</groupId>
                 <artifactId>logback-classic</artifactId>
@@ -140,46 +149,56 @@
                 <artifactId>bcpkix-jdk18on</artifactId>
                 <version>${bcprov.jdk18on.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>io.netty</groupId>-->
-<!--                <artifactId>netty-common</artifactId>-->
-<!--                <version>${netty.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>io.netty</groupId>-->
-<!--                <artifactId>netty-handler</artifactId>-->
-<!--                <version>${netty.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>io.netty</groupId>-->
-<!--                <artifactId>netty-codec-http</artifactId>-->
-<!--                <version>${netty.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>io.netty</groupId>-->
-<!--                <artifactId>netty-transport</artifactId>-->
-<!--                <version>${netty.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>io.netty</groupId>-->
-<!--                <artifactId>netty-resolver</artifactId>-->
-<!--                <version>${netty.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>io.netty</groupId>-->
-<!--                <artifactId>netty-transport-native-unix-common</artifactId>-->
-<!--                <version>${netty.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>io.netty</groupId>-->
-<!--                <artifactId>netty-buffer</artifactId>-->
-<!--                <version>${netty.version}</version>-->
-<!--            </dependency>-->
-<!--            <dependency>-->
-<!--                <groupId>io.netty</groupId>-->
-<!--                <artifactId>netty-codec</artifactId>-->
-<!--                <version>${netty.version}</version>-->
-<!--            </dependency>-->
+            <dependency>
+                <groupId>org.bouncycastle</groupId>
+                <artifactId>bcprov-jdk18on</artifactId>
+                <version>${bcprov.jdk18on.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commons-beanutils.version}</version>
+            </dependency>
+            <!--            <dependency>-->
+            <!--                <groupId>io.netty</groupId>-->
+            <!--                <artifactId>netty-common</artifactId>-->
+            <!--                <version>${netty.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>io.netty</groupId>-->
+            <!--                <artifactId>netty-handler</artifactId>-->
+            <!--                <version>${netty.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>io.netty</groupId>-->
+            <!--                <artifactId>netty-codec-http</artifactId>-->
+            <!--                <version>${netty.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>io.netty</groupId>-->
+            <!--                <artifactId>netty-transport</artifactId>-->
+            <!--                <version>${netty.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>io.netty</groupId>-->
+            <!--                <artifactId>netty-resolver</artifactId>-->
+            <!--                <version>${netty.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>io.netty</groupId>-->
+            <!--                <artifactId>netty-transport-native-unix-common</artifactId>-->
+            <!--                <version>${netty.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>io.netty</groupId>-->
+            <!--                <artifactId>netty-buffer</artifactId>-->
+            <!--                <version>${netty.version}</version>-->
+            <!--            </dependency>-->
+            <!--            <dependency>-->
+            <!--                <groupId>io.netty</groupId>-->
+            <!--                <artifactId>netty-codec</artifactId>-->
+            <!--                <version>${netty.version}</version>-->
+            <!--            </dependency>-->
         </dependencies>
     </dependencyManagement>
 </project>
