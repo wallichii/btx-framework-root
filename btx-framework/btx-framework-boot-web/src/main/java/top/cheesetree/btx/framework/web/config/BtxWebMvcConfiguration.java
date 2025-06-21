@@ -7,32 +7,18 @@ import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.PropertyNamingStrategy;
 import com.alibaba.fastjson2.support.config.FastJsonConfig;
 import com.alibaba.fastjson2.support.spring6.http.converter.FastJsonHttpMessageConverter;
-import okhttp3.ConnectionPool;
-import okhttp3.ConnectionSpec;
-import okhttp3.OkHttpClient;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
-import org.springframework.boot.autoconfigure.web.servlet.WebMvcRegistrations;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.OkHttp3ClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.AbstractJackson2HttpMessageConverter;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import top.cheesetree.btx.framework.web.http.CustomSSLSocketFactory;
-import top.cheesetree.btx.framework.web.http.CustomTrustManager;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * @Author: van
@@ -40,13 +26,10 @@ import java.util.concurrent.TimeUnit;
  * @Description: TODO
  */
 @Configuration
-@EnableConfigurationProperties({BtxWebProperties.class, BtxRestProperties.class})
+@EnableConfigurationProperties({BtxWebProperties.class})
 public class BtxWebMvcConfiguration implements WebMvcConfigurer {
     @Autowired
     BtxWebProperties btxWebProperties;
-
-    @Autowired
-    BtxRestProperties btxRestProperties;
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -106,56 +89,6 @@ public class BtxWebMvcConfiguration implements WebMvcConfigurer {
 
         JSONFactory.getDefaultObjectWriterProvider().setNamingStrategy(PropertyNamingStrategy.CamelCase1x);
 
-    }
-
-    @Bean
-    @ConditionalOnClass(name = {"org.springframework.cloud.openfeign.FeignClient"})
-    public WebMvcRegistrations webMvcRegistrations() {
-        return new WebMvcRegistrations() {
-            @Override
-            public RequestMappingHandlerMapping getRequestMappingHandlerMapping() {
-                return new RequestMappingHandlerMapping() {
-                    @Override
-                    protected boolean isHandler(Class<?> beanType) {
-                        // return super.isHandler(beanType) &&
-                        //								!AnnotatedElementUtils.hasAnnotation(beanType,
-                        //										org.springframework.cloud.openfeign.FeignClient.class)
-                        return super.isHandler(beanType);
-                    }
-                };
-            }
-
-        };
-    }
-
-    @Bean("btxRestTemplate")
-    public RestTemplate getRestTemplate() {
-        OkHttpClient okclient =
-                new OkHttpClient().newBuilder().connectionPool(new ConnectionPool(btxRestProperties.getMaxPoolIdle(),
-                        btxRestProperties.getMaxPoolLiveTime(), TimeUnit.MINUTES)).retryOnConnectionFailure(false).connectTimeout(btxRestProperties.getConnectTimeOut(), TimeUnit.SECONDS).readTimeout(btxRestProperties.getReadTimeOut(), TimeUnit.SECONDS).writeTimeout(btxRestProperties.getWriteTimeOut(), TimeUnit.SECONDS).build();
-
-        return handleRestTemplate(okclient);
-    }
-
-    @Bean("btxRestSslTemplate")
-    public RestTemplate getRestSslTemplate() {
-        OkHttpClient okclient =
-                new OkHttpClient().newBuilder().connectionSpecs(Arrays.asList(ConnectionSpec.MODERN_TLS,
-                        ConnectionSpec.COMPATIBLE_TLS)).sslSocketFactory(new CustomSSLSocketFactory(),
-                        new CustomTrustManager()).hostnameVerifier((hostname, session) -> true).connectionPool(new ConnectionPool(btxRestProperties.getMaxPoolIdle(), btxRestProperties.getMaxPoolLiveTime(), TimeUnit.MINUTES)).retryOnConnectionFailure(false).connectTimeout(btxRestProperties.getConnectTimeOut(), TimeUnit.SECONDS).readTimeout(btxRestProperties.getReadTimeOut(), TimeUnit.SECONDS).writeTimeout(btxRestProperties.getWriteTimeOut(), TimeUnit.SECONDS).build();
-        return handleRestTemplate(okclient);
-    }
-
-    private RestTemplate handleRestTemplate(OkHttpClient okclient) {
-        RestTemplate rt = new RestTemplate(new OkHttp3ClientHttpRequestFactory(okclient));
-
-        rt.getMessageConverters().forEach(httpMessageConverter -> {
-            if (httpMessageConverter instanceof StringHttpMessageConverter) {
-                ((StringHttpMessageConverter) httpMessageConverter).setDefaultCharset(StandardCharsets.UTF_8);
-            }
-        });
-
-        return rt;
     }
 
 }

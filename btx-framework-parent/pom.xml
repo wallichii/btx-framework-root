@@ -38,6 +38,7 @@
         <netty.version>4.1.121.Final</netty.version>
         <bcprov.jdk18on.version>1.81</bcprov.jdk18on.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
+        <io.r2dbc.version>1.1.1</io.r2dbc.version>
     </properties>
 
     <dependencyManagement>

@@ -21,8 +21,10 @@
         <module>btx-framework-boot-security-shiro</module>
         <module>btx-framework-boot-database</module>
         <module>btx-framework-boot-web</module>
+        <module>btx-framework-boot-webflux</module>
         <module>btx-framework-dependencies</module>
         <module>btx-framework-boot-security-shiro-redis</module>
+        <module>btx-framework-boot-database-reactive</module>
     </modules>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>

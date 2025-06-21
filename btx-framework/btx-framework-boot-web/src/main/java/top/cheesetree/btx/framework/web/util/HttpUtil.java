@@ -5,11 +5,12 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
+import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.web.client.RestClient;
 import top.cheesetree.btx.framework.web.http.HttpsClientRequestFactory;
 import top.cheesetree.btx.framework.web.model.dto.FileInfoDTO;
 
@@ -27,43 +28,45 @@ public class HttpUtil {
     private final static int DEF_CON_TIMEOUT = 5000;
     private final static int DEF_FILE_TIMEOUT = 60000;
 
-    public static String httpGet(String url, boolean isHttps) {
+    public static String httpGet(String url, @Deprecated boolean isHttps) {
         return httpGet(url, null, DEF_TIMEOUT, isHttps);
     }
 
-    public static String httpGet(String url, int to, boolean isHttps) {
+    public static String httpGet(String url, int to, @Deprecated boolean isHttps) {
         return httpGet(url, null, to, isHttps);
     }
 
-    public static String httpGet(String url, HashMap<String, String> headers, boolean isHttps) {
+    public static String httpGet(String url, HashMap<String, String> headers, @Deprecated boolean isHttps) {
         return httpGet(url, headers, DEF_TIMEOUT, isHttps);
     }
 
 
-    public static String httpPostJson(String url, String pa, boolean isHttps) {
+    public static String httpPostJson(String url, String pa, @Deprecated boolean isHttps) {
         return httpPostJson(url, pa, DEF_TIMEOUT, isHttps);
     }
 
-    public static String httpPostJson(String url, HashMap<String, String> headers, String pa, boolean isHttps) {
+    public static String httpPostJson(String url, HashMap<String, String> headers, String pa,
+                                      @Deprecated boolean isHttps) {
         return httpPost(url, pa, headers, DEF_TIMEOUT, isHttps);
     }
 
-    public static String httpPostJson(String url, HashMap<String, String> headers, String pa,int to, boolean isHttps) {
+    public static String httpPostJson(String url, HashMap<String, String> headers, String pa, int to,
+                                      @Deprecated boolean isHttps) {
         return httpPost(url, pa, headers, to, isHttps);
     }
 
-    public static String httpPostJson(String url, String pa, int to, boolean isHttps) {
+    public static String httpPostJson(String url, String pa, int to, @Deprecated boolean isHttps) {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
 
         return httpPost(url, pa, headers, to, isHttps);
     }
 
-    public static String httpAjaxPost(String url, HashMap<String, String> pa, boolean isHttps) {
+    public static String httpAjaxPost(String url, HashMap<String, String> pa, @Deprecated boolean isHttps) {
         return httpAjaxPost(url, pa, DEF_TIMEOUT, isHttps);
     }
 
-    public static String httpAjaxPost(String url, HashMap<String, String> pa, int to, boolean isHttps) {
+    public static String httpAjaxPost(String url, HashMap<String, String> pa, int to, @Deprecated boolean isHttps) {
         HashMap<String, String> headers = new HashMap<String, String>();
         headers.put(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_FORM_URLENCODED_VALUE);
 
@@ -81,18 +84,18 @@ public class HttpUtil {
     }
 
     public static String httpUploadFile(String url, FileInfoDTO info,
-                                        boolean isHttps) {
+                                        @Deprecated boolean isHttps) {
         return httpUploadFile(url, info, null, DEF_FILE_TIMEOUT, isHttps);
     }
 
     public static String httpUploadFile(String url, FileInfoDTO info, HashMap<String, String> headers,
-                                        boolean isHttps) {
+                                        @Deprecated boolean isHttps) {
         return httpUploadFile(url, info, headers, DEF_FILE_TIMEOUT, isHttps);
 
     }
 
     public static String httpUploadFile(String url, FileInfoDTO info, HashMap<String, String> headers, int to,
-                                        boolean isHttps) {
+                                        @Deprecated boolean isHttps) {
         if (info == null) {
             return "";
         }
@@ -120,17 +123,10 @@ public class HttpUtil {
         return httpPost(url, body, headers, to, isHttps);
     }
 
-    /**
-     * get方法
-     */
-    public static String httpGet(String url, HashMap<String, String> headers, int to, boolean isHttps) {
-        return httpGet(url, headers, to, isHttps, true);
-    }
-
-    public static String httpGet(String url, HashMap<String, String> headers, int to, boolean isHttps,
-                                 boolean ndBufferBody) {
+    public static String httpGet(String url, HashMap<String, String> headers, int to, @Deprecated boolean isHttps
+    ) {
         String ret = "";
-        RestTemplate restTemplate = geRestTemplate(isHttps, to, ndBufferBody);
+        RestClient restClient = getRestClient(url.startsWith("https"), to);
         HttpHeaders header = new HttpHeaders();
 
         if (headers != null) {
@@ -141,8 +137,9 @@ public class HttpUtil {
             }
         }
 
-        HttpEntity<HashMap<String, String>> httpEntity = new HttpEntity<HashMap<String, String>>(header);
-        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.GET, httpEntity, String.class);
+        ResponseEntity<String> res = restClient.get().uri(url).headers(httpHeaders -> {
+            httpHeaders.putAll(header);
+        }).retrieve().toEntity(String.class);
         if (HttpStatus.OK.equals(res.getStatusCode())) {
             ret = res.getBody();
         } else {
@@ -152,36 +149,38 @@ public class HttpUtil {
         return ret;
     }
 
-    public static <T> String httpPost(String url, T params, HashMap<String, String> headers, int to, boolean isHttps) {
-        return httpPost(url, params, headers, to, isHttps, true);
-    }
-
-    public static <T> String httpPost(String url, T params, HashMap<String, String> headers, int to, boolean isHttps,
-                                      boolean ndBufferBody) {
-        return httpRequest(url, params, headers, to, isHttps, HttpMethod.POST, ndBufferBody);
+    public static <T> String httpPost(String url, T params, HashMap<String, String> headers, int to,
+                                      @Deprecated boolean isHttps
+    ) {
+        return httpRequest(url, params, headers, to, isHttps, HttpMethod.POST);
     }
 
 
-    public static <T> String httpPut(String url, HashMap<String, String> headers, T params, boolean isHttps) {
+    public static <T> String httpPut(String url, HashMap<String, String> headers, T params,
+                                     @Deprecated boolean isHttps) {
         return httpRequest(url, params, headers, DEF_FILE_TIMEOUT, isHttps, HttpMethod.PUT);
     }
 
-    public static <T> String httpPut(String url, T params, HashMap<String, String> headers, int to, boolean isHttps) {
+    public static <T> String httpPut(String url, T params, HashMap<String, String> headers, int to,
+                                     @Deprecated boolean isHttps) {
         return httpRequest(url, params, headers, to, isHttps, HttpMethod.PUT);
     }
 
-    public static <T> String httpDel(String url, HashMap<String, String> headers, T params, boolean isHttps) {
+    public static <T> String httpDel(String url, HashMap<String, String> headers, T params,
+                                     @Deprecated boolean isHttps) {
         return httpRequest(url, params, headers, DEF_FILE_TIMEOUT, isHttps, HttpMethod.DELETE);
     }
 
-    public static <T> String httpDel(String url, T params, HashMap<String, String> headers, int to, boolean isHttps) {
+    public static <T> String httpDel(String url, T params, HashMap<String, String> headers, int to,
+                                     @Deprecated boolean isHttps) {
         return httpRequest(url, params, headers, to, isHttps, HttpMethod.DELETE);
     }
 
-    public static <T> String httpRequest(String url, T params, HashMap<String, String> headers, int to, boolean isHttps,
-                                         HttpMethod method, boolean ndBufferBody) {
+    public static <T> String httpRequest(String url, T params, HashMap<String, String> headers, int to,
+                                         @Deprecated boolean isHttps,
+                                         HttpMethod method) {
         String ret = "";
-        RestTemplate restTemplate = geRestTemplate(isHttps, to, ndBufferBody);
+        RestClient restClient = getRestClient(url.startsWith("https"), to);
         HttpHeaders header = new HttpHeaders();
 
         if (headers != null) {
@@ -197,8 +196,9 @@ public class HttpUtil {
             header.put(HttpHeaders.ACCEPT, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
         }
 
-        HttpEntity<T> httpEntity = new HttpEntity<T>(params, header);
-        ResponseEntity<String> res = restTemplate.exchange(url, method, httpEntity, String.class);
+        ResponseEntity<String> res = restClient.method(method).uri(url).headers(httpHeaders -> {
+            httpHeaders.putAll(header);
+        }).body(params).retrieve().toEntity(String.class);
         if (HttpStatus.OK.equals(res.getStatusCode())) {
             ret = res.getBody();
         } else {
@@ -208,38 +208,25 @@ public class HttpUtil {
         return ret;
     }
 
-    public static <T> String httpRequest(String url, T params, HashMap<String, String> headers, int to, boolean isHttps,
-                                         HttpMethod method) {
-        return httpRequest(url, params, headers, to, isHttps, method, true);
-    }
+    public static RestClient getRestClient(boolean isHttps, int timeout) {
+        RestClient restClient;
 
-    public static RestTemplate geRestTemplate(boolean isHttps, int timeout, boolean ndBufferBody) {
-        RestTemplate restTemplate;
+        List<HttpMessageConverter<?>> converters = new ArrayList<>();
+        converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
+
         if (isHttps) {
             HttpsClientRequestFactory hcr = new HttpsClientRequestFactory();
             hcr.setConnectTimeout(DEF_CON_TIMEOUT);
             hcr.setReadTimeout(timeout);
-            hcr.setBufferRequestBody(ndBufferBody);
-            restTemplate = new RestTemplate(hcr);
+            restClient = RestClient.builder().requestFactory(hcr).messageConverters(converters).build();
         } else {
             SimpleClientHttpRequestFactory hrf = new SimpleClientHttpRequestFactory();
             hrf.setConnectTimeout(DEF_CON_TIMEOUT);
             hrf.setReadTimeout(timeout);
-            hrf.setBufferRequestBody(ndBufferBody);
-            restTemplate = new RestTemplate(hrf);
+            restClient = RestClient.builder().requestFactory(hrf).messageConverters(converters).build();
         }
 
-        restTemplate.getMessageConverters().forEach(httpMessageConverter -> {
-            if (httpMessageConverter instanceof StringHttpMessageConverter) {
-                ((StringHttpMessageConverter) httpMessageConverter).setDefaultCharset(StandardCharsets.UTF_8);
-            }
-        });
-
-        return restTemplate;
-    }
-
-    public static RestTemplate geRestTemplate(boolean isHttps, int timeout) {
-        return geRestTemplate(isHttps, timeout, true);
+        return restClient;
     }
 
 }

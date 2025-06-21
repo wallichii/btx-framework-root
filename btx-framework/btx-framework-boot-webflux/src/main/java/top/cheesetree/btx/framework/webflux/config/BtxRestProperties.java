@@ -1,4 +1,4 @@
-package top.cheesetree.btx.framework.web.config;
+package top.cheesetree.btx.framework.webflux.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -8,7 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @Date: 2022/1/6 16:01
  * @Description: TODO
  */
-@ConfigurationProperties("btx.web.rest")
+@ConfigurationProperties("btx.weblux.rest")
 @Data
 public class BtxRestProperties {
     private int connectTimeOut = 2;
