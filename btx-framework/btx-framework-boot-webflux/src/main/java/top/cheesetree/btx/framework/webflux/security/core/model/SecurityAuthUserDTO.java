@@ -1,4 +1,4 @@
-package top.cheesetree.btx.framework.webflux.security.model;
+package top.cheesetree.btx.framework.webflux.security.core.model;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

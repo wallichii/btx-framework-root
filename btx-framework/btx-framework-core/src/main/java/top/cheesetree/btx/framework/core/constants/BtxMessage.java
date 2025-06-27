@@ -25,4 +25,7 @@ public class BtxMessage implements Serializable {
         this.code = code;
         this.message = message;
     }
+
+    public BtxMessage() {
+    }
 }

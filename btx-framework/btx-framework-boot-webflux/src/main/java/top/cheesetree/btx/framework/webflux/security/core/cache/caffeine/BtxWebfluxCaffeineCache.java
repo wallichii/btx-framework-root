@@ -1,7 +1,7 @@
-package top.cheesetree.btx.framework.webflux.security.cache.caffeine;
+package top.cheesetree.btx.framework.webflux.security.core.cache.caffeine;
 
 import com.github.benmanes.caffeine.cache.Cache;
-import top.cheesetree.btx.framework.webflux.security.cache.IBtxWebfluxCache;
+import top.cheesetree.btx.framework.webflux.security.core.cache.IBtxWebfluxCache;
 
 /**
  * @author van

@@ -7,12 +7,12 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.web.codec.CodecCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
-import org.springframework.util.AntPathMatcher;
 import org.springframework.web.cors.reactive.CorsUtils;
 import org.springframework.web.reactive.config.EnableWebFlux;
 import org.springframework.web.reactive.config.WebFluxConfigurer;
@@ -23,23 +23,22 @@ import reactor.core.publisher.Mono;
 import top.cheesetree.btx.framework.webflux.fastjson.FastJson2Reader;
 import top.cheesetree.btx.framework.webflux.fastjson.FastJson2Writer;
 
+import static top.cheesetree.btx.framework.webflux.comm.BtxWebfluxyConst.SERVER_WEB_EXCHANGE;
+
 /**
  * @Author: van
  * @Date: 2021/8/27 10:00
  * @Description: TODO
  */
 @Configuration
-@EnableConfigurationProperties({BtxWebProperties.class, BtxRestProperties.class,
-        BtxWebfluxCorsProperties.class})
+@EnableConfigurationProperties({BtxWebfluxCorsProperties.class})
 @EnableWebFlux
 public class BtxWebfluxConfiguration implements WebFluxConfigurer {
     @Autowired
     BtxWebfluxCorsProperties corsProperties;
 
-    static AntPathMatcher matcher = new AntPathMatcher();
-
     @Bean
-    @ConditionalOnProperty(name = "btx.weblux.security.cors.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "btx.webflux.security.cors.enabled", havingValue = "true")
     public WebFilter corsFilter() {
         return (ServerWebExchange ctx, WebFilterChain chain) -> {
             ServerHttpRequest request = ctx.getRequest();
@@ -83,6 +82,17 @@ public class BtxWebfluxConfiguration implements WebFluxConfigurer {
             }
 
             return chain.filter(ctx);
+        };
+    }
+
+    @Bean
+    @Order
+    @ConditionalOnProperty(name = "btx.webflux.security.exchange.enable", havingValue = "true", matchIfMissing = true)
+    public WebFilter exchangeContextWebFilter() {
+        return (ServerWebExchange exchange, WebFilterChain chain) -> {
+            ReactiveRequestContextHolder.set(exchange);
+            return chain.filter(exchange)
+                    .contextWrite(ctx -> ctx.put(SERVER_WEB_EXCHANGE, exchange));
         };
     }
 

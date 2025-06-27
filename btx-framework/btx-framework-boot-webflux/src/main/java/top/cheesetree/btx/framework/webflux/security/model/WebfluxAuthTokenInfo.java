@@ -16,4 +16,5 @@ import top.cheesetree.btx.framework.core.model.ValueObject;
 public class WebfluxAuthTokenInfo implements ValueObject {
     private String accessToken;
     private String refreshToken;
+    private int expires_in;
 }

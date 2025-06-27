@@ -1,10 +1,11 @@
-package top.cheesetree.btx.framework.webflux.security.cache;
+package top.cheesetree.btx.framework.webflux.security;
 
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
+import top.cheesetree.btx.framework.webflux.security.core.cache.IBtxWebfluxCache;
 import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
 
 import java.io.Serializable;
@@ -18,28 +19,28 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description TODO
  */
 @Component
-@ConditionalOnProperty(name = "gourd.security.spring-security.cache.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "btx.webflux.security.cache.enabled", havingValue = "true")
 public class BtxWebfluxCacheFactory {
     private static Map<KeyValueMapKey, IBtxWebfluxCache<?, ?>> redisTemplateMap = new ConcurrentHashMap<>();
 
     @Autowired
-    IBtxWebfluxCache gourdSpringSecurityCache;
+    IBtxWebfluxCache btxWebfluxCache;
 
-    public <TKey, TValue> IBtxWebfluxCache<TKey, TValue> generateGourdSpringSecurityCache(Class<TKey> keyClz,
+    public <TKey, TValue> IBtxWebfluxCache<TKey, TValue> generateCache(Class<TKey> keyClz,
                                                                                           Class<TValue> valueClz) {
         KeyValueMapKey redisTemplateMapKey = new KeyValueMapKey(keyClz, valueClz);
         IBtxWebfluxCache<TKey, TValue> result =
                 (IBtxWebfluxCache<TKey, TValue>) redisTemplateMap.get(redisTemplateMapKey);
         if (result == null) {
-            result = gourdSpringSecurityCache.getInstance();
+            result = btxWebfluxCache.getInstance();
             redisTemplateMap.put(redisTemplateMapKey, result);
         }
 
         return result;
     }
 
-    public IBtxWebfluxCache<String, WebfluxSecurityAuthUserDTO> generateGourdSpringSecurityCache() {
-        return generateGourdSpringSecurityCache(String.class, WebfluxSecurityAuthUserDTO.class);
+    public IBtxWebfluxCache<String, WebfluxSecurityAuthUserDTO> generateCache() {
+        return generateCache(String.class, WebfluxSecurityAuthUserDTO.class);
     }
 
     @Getter

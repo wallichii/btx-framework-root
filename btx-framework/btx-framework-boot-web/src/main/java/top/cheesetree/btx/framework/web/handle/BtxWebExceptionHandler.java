@@ -30,25 +30,25 @@ public class BtxWebExceptionHandler {
 
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public CommJSON errorHandler(Exception ex) {
-        CommJSON ret;
+    public CommJSON<String> errorHandler(Exception ex) {
+        CommJSON<String> ret;
 
         if (ex instanceof BtxException) {
             BtxException err = (BtxException) ex;
 
             if (err instanceof BusinessException) {
-                ret = new CommJSON(BtxMessage.BUSI_ERROR.getCode(), err.getErrcode(), err.getMessage(), null);
+                ret = new CommJSON<>(BtxMessage.BUSI_ERROR.getCode(), err.getErrcode(), err.getMessage(), null);
             } else {
-                ret = new CommJSON(BtxMessage.SYSTEM_ERROR.getCode(), err.getErrcode(),
+                ret = new CommJSON<>(BtxMessage.SYSTEM_ERROR.getCode(), err.getErrcode(),
                         err.getMessage());
             }
 
-            log.error("系统异常:[{},{}]{}", err.getErrcode(), err.getMessage(), ex);
+            log.error("系统异常:[{},{}]", err.getErrcode(), err.getMessage(), ex);
         } else {
-            ret = new CommJSON(BtxMessage.UNKOWN_ERROR);
+            ret = new CommJSON<>(BtxMessage.UNKOWN_ERROR);
             String reqid = UUID.randomUUID().toString();
             ret.setMsg(String.format("%s:%s", ret.getMsg(), reqid));
-            log.error("系统异常[{}]:{}", reqid, ex);
+            log.error("系统异常[{}]", reqid, ex);
         }
 
         return ret;
@@ -57,8 +57,8 @@ public class BtxWebExceptionHandler {
     @ResponseBody
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(value = BindException.class)
-    public CommJSON validationErrorHandler(Exception ex) {
-        CommJSON ret;
+    public CommJSON<String> validationErrorHandler(Exception ex) {
+        CommJSON<String> ret;
 
         if (ex instanceof BindException) {
             BindException err = (BindException) ex;
@@ -67,15 +67,15 @@ public class BtxWebExceptionHandler {
                 errmsg.add(e.getDefaultMessage());
             });
 
-            ret = new CommJSON(BtxMessage.VALIDATE_ERROR.getCode(), "", StringUtils.collectionToDelimitedString(errmsg, ";"
+            ret = new CommJSON<>(BtxMessage.VALIDATE_ERROR.getCode(), "", StringUtils.collectionToDelimitedString(errmsg, ";"
             ), null);
 
-            log.error("系统异常:[{},{}]{}", "", err.getMessage(), ex);
+            log.error("系统异常:[{},{}]", "", err.getMessage(), ex);
         } else {
-            ret = new CommJSON(BtxMessage.UNKOWN_ERROR);
+            ret = new CommJSON<>(BtxMessage.UNKOWN_ERROR);
             String reqid = UUID.randomUUID().toString();
             ret.setMsg(String.format("%s:%s", ret.getMsg(), reqid));
-            log.error("系统异常[{}]:{}", reqid, ex);
+            log.error("系统异常[{}]", reqid, ex);
         }
 
         return ret;
