@@ -11,6 +11,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestTemplate;
 import top.cheesetree.btx.framework.web.http.HttpsClientRequestFactory;
 import top.cheesetree.btx.framework.web.model.dto.FileInfoDTO;
 
@@ -96,6 +97,8 @@ public class HttpUtil {
 
     public static String httpUploadFile(String url, FileInfoDTO info, HashMap<String, String> headers, int to,
                                         @Deprecated boolean isHttps) {
+        String ret = "";
+
         if (info == null) {
             return "";
         }
@@ -116,11 +119,26 @@ public class HttpUtil {
 
         params.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
         HttpEntity<Resource> fileEntity =
-                new HttpEntity<>(new ByteArrayResource(Base64.getDecoder().decode(info.getFiledata())), params);
+                new HttpEntity<>(new ByteArrayResource(info.getFiledata()), params);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add(filekey, fileEntity);
-        return httpPost(url, body, headers, to, isHttps);
+        RestTemplate restTemplate = geRestTemplate(url.startsWith("https"), to);
+        HttpHeaders header = new HttpHeaders();
+
+        for (Map.Entry<String, String> entry : headers.entrySet()) {
+            header.add(entry.getKey(), entry.getValue());
+        }
+
+        HttpEntity<Object> httpEntity = new HttpEntity<>(body, header);
+        ResponseEntity<String> res = restTemplate.exchange(url, HttpMethod.POST, httpEntity, String.class);
+        if (HttpStatus.OK.equals(res.getStatusCode())) {
+            ret = res.getBody();
+        } else {
+            log.error("REQ ERROR:URL[{}] RES[{}]", url, res);
+        }
+
+        return ret;
     }
 
     public static String httpGet(String url, HashMap<String, String> headers, int to, @Deprecated boolean isHttps
@@ -227,6 +245,29 @@ public class HttpUtil {
         }
 
         return restClient;
+    }
+
+    public static RestTemplate geRestTemplate(boolean isHttps, int timeout) {
+        RestTemplate restTemplate;
+        if (isHttps) {
+            HttpsClientRequestFactory hcr = new HttpsClientRequestFactory();
+            hcr.setConnectTimeout(DEF_CON_TIMEOUT);
+            hcr.setReadTimeout(timeout);
+            restTemplate = new RestTemplate(hcr);
+        } else {
+            SimpleClientHttpRequestFactory hrf = new SimpleClientHttpRequestFactory();
+            hrf.setConnectTimeout(DEF_CON_TIMEOUT);
+            hrf.setReadTimeout(timeout);
+            restTemplate = new RestTemplate(hrf);
+        }
+
+        restTemplate.getMessageConverters().forEach(httpMessageConverter -> {
+            if (httpMessageConverter instanceof StringHttpMessageConverter) {
+                ((StringHttpMessageConverter) httpMessageConverter).setDefaultCharset(StandardCharsets.UTF_8);
+            }
+        });
+
+        return restTemplate;
     }
 
 }
