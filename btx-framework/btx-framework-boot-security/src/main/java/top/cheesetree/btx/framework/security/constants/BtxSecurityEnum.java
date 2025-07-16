@@ -9,4 +9,9 @@ public class BtxSecurityEnum {
     public enum AuthType {
         SESSION, TOKEN, JWT, CAS, EXT_TOKEN
     }
+
+    public enum CacheType {
+        CAFFEINE,
+        REDIS
+    }
 }

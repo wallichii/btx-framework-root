@@ -7,11 +7,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import top.cheesetree.btx.framework.core.constants.BtxMessage;
 import top.cheesetree.btx.framework.core.json.CommJSON;
-import top.cheesetree.btx.framework.webflux.security.IBtxWebfluxUserService;
+import top.cheesetree.btx.framework.security.IBtxSecurityUserService;
+import top.cheesetree.btx.framework.security.model.SecurityUserDTO;
 import top.cheesetree.btx.framework.webflux.security.core.authentication.AuthenticationProvider;
 import top.cheesetree.btx.framework.webflux.security.core.comm.AuthenticationException;
 import top.cheesetree.btx.framework.webflux.security.core.config.BtxWebfluxSecurityProperties;
-import top.cheesetree.btx.framework.webflux.security.core.model.*;
+import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationInfo;
+import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationToken;
+import top.cheesetree.btx.framework.webflux.security.core.model.SimpleAuthorizationInfo;
+import top.cheesetree.btx.framework.webflux.security.core.model.StatelessToken;
 import top.cheesetree.btx.framework.webflux.security.model.WebfluxAuthTokenInfo;
 import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
 
@@ -28,7 +32,7 @@ import java.util.UUID;
 @Slf4j
 public class BtxUserAuthenticationProvider implements AuthenticationProvider {
     @Autowired
-    IBtxWebfluxUserService webfluxUserService;
+    IBtxSecurityUserService<? extends SecurityUserDTO> webfluxUserService;
     @Autowired
     BtxWebfluxSecurityProperties btxWebfluxSecurityProperties;
 

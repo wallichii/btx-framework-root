@@ -1,7 +1,7 @@
 package top.cheesetree.btx.framework.webflux.config;
 
 
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.web.codec.CodecCustomizer;
@@ -34,11 +34,11 @@ import static top.cheesetree.btx.framework.webflux.comm.BtxWebfluxyConst.SERVER_
 @EnableConfigurationProperties({BtxWebfluxCorsProperties.class})
 @EnableWebFlux
 public class BtxWebfluxConfiguration implements WebFluxConfigurer {
-    @Autowired
+    @Resource
     BtxWebfluxCorsProperties corsProperties;
 
     @Bean
-    @ConditionalOnProperty(name = "btx.webflux.security.cors.enabled", havingValue = "true")
+    @ConditionalOnProperty(name = "btx.webflux.cors.enabled", havingValue = "true")
     public WebFilter corsFilter() {
         return (ServerWebExchange ctx, WebFilterChain chain) -> {
             ServerHttpRequest request = ctx.getRequest();
@@ -87,7 +87,7 @@ public class BtxWebfluxConfiguration implements WebFluxConfigurer {
 
     @Bean
     @Order
-    @ConditionalOnProperty(name = "btx.webflux.security.exchange.enable", havingValue = "true", matchIfMissing = true)
+    @ConditionalOnProperty(name = "btx.webflux.exchange.enable", havingValue = "true", matchIfMissing = true)
     public WebFilter exchangeContextWebFilter() {
         return (ServerWebExchange exchange, WebFilterChain chain) -> {
             ReactiveRequestContextHolder.set(exchange);

@@ -18,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  * @date 2022/3/21 15:52
  * @description TODO
  */
-@ConditionalOnExpression("${btx.webflux.security.cache.enabled:false} && '${btx.webflux.security.cache" +
+@ConditionalOnExpression("${btx.security.webflux.cache.enabled:false} && '${btx.security.webflux.cache" +
         ".cache-type:CAFFEINE}'.equalsIgnoreCase('CAFFEINE')")
 @Configuration
 @Slf4j

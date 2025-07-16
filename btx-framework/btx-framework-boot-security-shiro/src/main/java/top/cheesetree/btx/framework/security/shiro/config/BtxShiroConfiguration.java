@@ -41,7 +41,10 @@ import top.cheesetree.btx.framework.security.shiro.support.cas.BtxSecurityCasAut
 import top.cheesetree.btx.framework.security.shiro.support.cas.BtxSecurityShiroCasFilter;
 import top.cheesetree.btx.framework.security.shiro.support.cas.BtxShiroCasProperties;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: van
@@ -104,7 +107,7 @@ public class BtxShiroConfiguration {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         if (btxSecurityProperties.getContextInterceptorExcludePathPatterns() != null) {
             //匿名访问
-            Arrays.stream(btxSecurityProperties.getContextInterceptorExcludePathPatterns()).forEach((String extpath) -> {
+            btxSecurityProperties.getContextInterceptorExcludePathPatterns().forEach((String extpath) -> {
                 filterChainDefinitionMap.put(extpath, "anon");
             });
         }

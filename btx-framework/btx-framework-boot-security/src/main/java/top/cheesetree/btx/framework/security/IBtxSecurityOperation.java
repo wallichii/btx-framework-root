@@ -14,7 +14,7 @@ public interface IBtxSecurityOperation {
 
     CommJSON<? extends SecurityAuthUserDTO> login(String... args);
 
-    CommJSON logout();
+    CommJSON<Object> logout();
 
     String getUserId();
 
@@ -22,5 +22,5 @@ public interface IBtxSecurityOperation {
 
     <T extends ValueObject> T getAuthInfo();
 
-    <T extends SecurityUserDTO>  CommJSON runas(T user);
+    <T extends SecurityUserDTO>  CommJSON<Object> runas(T user);
 }

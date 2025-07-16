@@ -33,9 +33,7 @@ public class BtxWebExceptionHandler {
     public CommJSON<String> errorHandler(Exception ex) {
         CommJSON<String> ret;
 
-        if (ex instanceof BtxException) {
-            BtxException err = (BtxException) ex;
-
+        if (ex instanceof BtxException err) {
             if (err instanceof BusinessException) {
                 ret = new CommJSON<>(BtxMessage.BUSI_ERROR.getCode(), err.getErrcode(), err.getMessage(), null);
             } else {
@@ -60,8 +58,7 @@ public class BtxWebExceptionHandler {
     public CommJSON<String> validationErrorHandler(Exception ex) {
         CommJSON<String> ret;
 
-        if (ex instanceof BindException) {
-            BindException err = (BindException) ex;
+        if (ex instanceof BindException err) {
             List<String> errmsg = new ArrayList<>();
             err.getBindingResult().getFieldErrors().forEach(e -> {
                 errmsg.add(e.getDefaultMessage());

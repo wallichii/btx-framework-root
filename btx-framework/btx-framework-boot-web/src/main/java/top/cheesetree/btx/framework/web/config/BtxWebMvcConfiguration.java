@@ -7,7 +7,7 @@ import com.alibaba.fastjson2.JSONWriter;
 import com.alibaba.fastjson2.PropertyNamingStrategy;
 import com.alibaba.fastjson2.support.config.FastJsonConfig;
 import com.alibaba.fastjson2.support.spring6.http.converter.FastJsonHttpMessageConverter;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.annotation.Resource;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
@@ -28,7 +28,7 @@ import java.util.List;
 @Configuration
 @EnableConfigurationProperties({BtxWebProperties.class})
 public class BtxWebMvcConfiguration implements WebMvcConfigurer {
-    @Autowired
+    @Resource
     BtxWebProperties btxWebProperties;
 
     @Override

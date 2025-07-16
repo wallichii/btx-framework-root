@@ -26,7 +26,7 @@ public class RequestUtil {
         }
 
         String xRequestedWith = request.getHeader("X-Requested-With");
-        if (xRequestedWith != null && xRequestedWith.indexOf("XMLHttpRequest") != -1) {
+        if (xRequestedWith != null && xRequestedWith.contains("XMLHttpRequest")) {
             return true;
         }
 
@@ -36,10 +36,6 @@ public class RequestUtil {
         }
 
         String ajax = request.getParameter("__ajax");
-        if ("json".equalsIgnoreCase(ajax) || "xml".equalsIgnoreCase(ajax)) {
-            return true;
-        }
-
-        return false;
+        return "json".equalsIgnoreCase(ajax) || "xml".equalsIgnoreCase(ajax);
     }
 }

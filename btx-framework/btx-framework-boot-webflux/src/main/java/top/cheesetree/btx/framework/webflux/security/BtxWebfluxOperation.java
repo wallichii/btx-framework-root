@@ -6,16 +6,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import top.cheesetree.btx.framework.core.constants.BtxMessage;
 import top.cheesetree.btx.framework.core.json.CommJSON;
+import top.cheesetree.btx.framework.security.IBtxSecurityOperation;
+import top.cheesetree.btx.framework.security.constants.BtxSecurityEnum;
+import top.cheesetree.btx.framework.security.model.SecurityUserDTO;
 import top.cheesetree.btx.framework.webflux.security.comm.BtxWebfluxSecurityMessage;
-import top.cheesetree.btx.framework.webflux.security.core.IBtxWebfluxOperation;
 import top.cheesetree.btx.framework.webflux.security.core.authentication.AuthenticationManager;
 import top.cheesetree.btx.framework.webflux.security.core.comm.AuthenticationException;
-import top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebfluxSecurityEnum;
 import top.cheesetree.btx.framework.webflux.security.core.config.BtxWebfluxCacheProperties;
 import top.cheesetree.btx.framework.webflux.security.core.config.BtxWebfluxSecurityProperties;
+import top.cheesetree.btx.framework.webflux.security.core.context.SecurityContextHolder;
 import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationInfo;
-import top.cheesetree.btx.framework.webflux.security.core.model.SecurityAuthUserDTO;
 import top.cheesetree.btx.framework.webflux.security.core.model.StatelessToken;
+import top.cheesetree.btx.framework.webflux.security.model.WebfluxAuthTokenInfo;
 import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
 
 import static top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebfluxSecurityConst.CACHE_KEY_PREFIX_TOKEN;
@@ -27,7 +29,7 @@ import static top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebflux
  */
 @Component
 @Slf4j
-public class BtxWebfluxOperation implements IBtxWebfluxOperation {
+public class BtxWebfluxOperation implements IBtxSecurityOperation {
     @Autowired
     BtxWebfluxSecurityProperties btxWebfluxSecurityProperties;
     @Autowired
@@ -43,10 +45,10 @@ public class BtxWebfluxOperation implements IBtxWebfluxOperation {
 
         StatelessToken t = null;
 
-        BtxWebfluxSecurityEnum.AuthType authtype = btxWebfluxSecurityProperties.getAuthType();
+        BtxSecurityEnum.AuthType authtype = btxWebfluxSecurityProperties.getAuthType();
 
         if (args.length > 2 && StringUtils.hasLength(args[2])) {
-            authtype = BtxWebfluxSecurityEnum.AuthType.valueOf(args[2]);
+            authtype = BtxSecurityEnum.AuthType.valueOf(args[2]);
         }
 
         switch (authtype) {
@@ -64,8 +66,8 @@ public class BtxWebfluxOperation implements IBtxWebfluxOperation {
             if (auth.isAuthenticated()) {
                 if (btxWebfluxCacheProperties.isEnabled()) {
                     if (btxWebfluxCacheFactory != null) {
-                        btxWebfluxCacheFactory.generateCache().add(CACHE_KEY_PREFIX_TOKEN + (String) auth.getCredentials(),
-                                (WebfluxSecurityAuthUserDTO) auth.getPrincipals(),
+                        btxWebfluxCacheFactory.generateCache().add(CACHE_KEY_PREFIX_TOKEN + auth.getCredentials(),
+                                auth,
                                 btxWebfluxCacheProperties.getCacheExpire());
 
                         if (log.isDebugEnabled()) {
@@ -89,7 +91,42 @@ public class BtxWebfluxOperation implements IBtxWebfluxOperation {
     }
 
     @Override
-    public <T extends SecurityAuthUserDTO> T getAuthInfo() {
+    public CommJSON logout() {
         return null;
+    }
+
+    @Override
+    public String getUserId() {
+        SecurityUserDTO u = getUserInfo();
+        if (u != null) {
+            return u.getUid();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public <T extends SecurityUserDTO> T getUserInfo() {
+        Object u = SecurityContextHolder.getContext().getAuthentication().getPrincipals();
+        if (u != null) {
+            return (T) (((WebfluxSecurityAuthUserDTO) u).getUser());
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public <T extends SecurityUserDTO> CommJSON runas(T user) {
+        return null;
+    }
+
+    @Override
+    public WebfluxAuthTokenInfo getAuthInfo() {
+        Object u = SecurityContextHolder.getContext().getAuthentication().getPrincipals();
+        if (u != null) {
+            return (WebfluxAuthTokenInfo) ((WebfluxSecurityAuthUserDTO) u).getAuthinfo();
+        } else {
+            return null;
+        }
     }
 }

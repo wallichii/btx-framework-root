@@ -1,7 +1,7 @@
 package top.cheesetree.btx.framework.webflux.security.core;
 
 import top.cheesetree.btx.framework.core.json.CommJSON;
-import top.cheesetree.btx.framework.webflux.security.core.model.SecurityAuthUserDTO;
+import top.cheesetree.btx.framework.security.model.SecurityAuthUserDTO;
 
 /**
  * @author van

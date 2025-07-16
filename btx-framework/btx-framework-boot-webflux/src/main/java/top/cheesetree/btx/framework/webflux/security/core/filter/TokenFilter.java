@@ -12,8 +12,12 @@ import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.server.WebFilter;
 import org.springframework.web.server.WebFilterChain;
 import reactor.core.publisher.Mono;
+import top.cheesetree.btx.framework.security.config.BtxSecurityProperties;
 import top.cheesetree.btx.framework.webflux.security.BtxWebfluxCacheFactory;
 import top.cheesetree.btx.framework.webflux.security.core.config.BtxWebfluxSecurityProperties;
+import top.cheesetree.btx.framework.webflux.security.core.context.SecurityContextHolder;
+import top.cheesetree.btx.framework.webflux.security.core.context.SecurityContextImpl;
+import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationInfo;
 
 import static top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebfluxSecurityConst.CACHE_KEY_PREFIX_TOKEN;
 
@@ -23,10 +27,12 @@ import static top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebflux
  * @description TODO
  */
 @Component
-@ConditionalOnProperty(name = "btx.webflux.security.auth-type", havingValue = "TOKEN")
+@ConditionalOnProperty(name = "btx.security.webflux.auth-type", havingValue = "TOKEN")
 public class TokenFilter implements WebFilter {
     @Autowired
-    BtxWebfluxSecurityProperties securityProperties;
+    BtxWebfluxSecurityProperties btxWebfluxSecurityProperties;
+    @Autowired
+    BtxSecurityProperties securityProperties;
 
     @Autowired(required = false)
     BtxWebfluxCacheFactory btxWebfluxCacheFactory;
@@ -43,11 +49,13 @@ public class TokenFilter implements WebFilter {
 
         ServerHttpResponse response = ctx.getResponse();
         if (btxWebfluxCacheFactory != null) {
-            String token = request.getHeaders().getFirst(securityProperties.getTokenKey());
+            String token = request.getHeaders().getFirst(btxWebfluxSecurityProperties.getTokenKey());
 
             if (!StringUtils.hasText(token) || !btxWebfluxCacheFactory.generateCache().containsKey(CACHE_KEY_PREFIX_TOKEN + token)) {
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return Mono.empty();
+            }else{
+                SecurityContextHolder.setContext(new SecurityContextImpl((AuthenticationInfo) btxWebfluxCacheFactory.generateCache().get(CACHE_KEY_PREFIX_TOKEN + token)));
             }
         } else {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);

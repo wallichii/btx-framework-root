@@ -16,7 +16,10 @@ import top.cheesetree.btx.framework.web.http.HttpsClientRequestFactory;
 import top.cheesetree.btx.framework.web.model.dto.FileInfoDTO;
 
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: van
@@ -74,9 +77,7 @@ public class HttpUtil {
         MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
 
         if (pa != null) {
-            Iterator<Map.Entry<String, String>> iter = pa.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<String, String> entry = iter.next();
+            for (Map.Entry<String, String> entry : pa.entrySet()) {
                 param.add(entry.getKey(), entry.getValue());
             }
         }
@@ -135,7 +136,7 @@ public class HttpUtil {
         if (HttpStatus.OK.equals(res.getStatusCode())) {
             ret = res.getBody();
         } else {
-            log.error("REQ ERROR:URL[{}] RES[{}]", url, res);
+            log.error("upload req error:url[{}] res[{}]", url, res);
         }
 
         return ret;
@@ -148,9 +149,7 @@ public class HttpUtil {
         HttpHeaders header = new HttpHeaders();
 
         if (headers != null) {
-            Iterator<Map.Entry<String, String>> iter = headers.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<String, String> entry = iter.next();
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 header.add(entry.getKey(), entry.getValue());
             }
         }
@@ -161,7 +160,7 @@ public class HttpUtil {
         if (HttpStatus.OK.equals(res.getStatusCode())) {
             ret = res.getBody();
         } else {
-            log.error("REQ ERROR:URL[{}] RES[{}]", url, res);
+            log.error("get req error:url[{}] res[{}]", url, res);
         }
 
         return ret;
@@ -202,16 +201,14 @@ public class HttpUtil {
         HttpHeaders header = new HttpHeaders();
 
         if (headers != null) {
-            Iterator<Map.Entry<String, String>> iter = headers.entrySet().iterator();
-            while (iter.hasNext()) {
-                Map.Entry<String, String> entry = iter.next();
+            for (Map.Entry<String, String> entry : headers.entrySet()) {
                 header.add(entry.getKey(), entry.getValue());
             }
-        }
 
-        if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
-            header.put(HttpHeaders.CONTENT_TYPE, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
-            header.put(HttpHeaders.ACCEPT, Arrays.asList(MediaType.APPLICATION_JSON_VALUE));
+            if (!headers.containsKey(HttpHeaders.CONTENT_TYPE)) {
+                header.put(HttpHeaders.CONTENT_TYPE, List.of(MediaType.APPLICATION_JSON_VALUE));
+                header.put(HttpHeaders.ACCEPT, List.of(MediaType.APPLICATION_JSON_VALUE));
+            }
         }
 
         ResponseEntity<String> res = restClient.method(method).uri(url).headers(httpHeaders -> {

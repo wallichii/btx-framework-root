@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import top.cheesetree.btx.framework.webflux.security.core.cache.IBtxWebfluxCache;
-import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
+import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationInfo;
 
 import java.io.Serializable;
 import java.util.Map;
@@ -19,7 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @description TODO
  */
 @Component
-@ConditionalOnProperty(name = "btx.webflux.security.cache.enabled", havingValue = "true")
+@ConditionalOnProperty(name = "btx.security.webflux.cache.enabled", havingValue = "true")
 public class BtxWebfluxCacheFactory {
     private static Map<KeyValueMapKey, IBtxWebfluxCache<?, ?>> redisTemplateMap = new ConcurrentHashMap<>();
 
@@ -39,8 +39,8 @@ public class BtxWebfluxCacheFactory {
         return result;
     }
 
-    public IBtxWebfluxCache<String, WebfluxSecurityAuthUserDTO> generateCache() {
-        return generateCache(String.class, WebfluxSecurityAuthUserDTO.class);
+    public IBtxWebfluxCache<String, AuthenticationInfo> generateCache() {
+        return generateCache(String.class, AuthenticationInfo.class);
     }
 
     @Getter

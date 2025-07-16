@@ -4,6 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @Author: van
  * @Date: 2021/8/27 13:58
@@ -13,7 +16,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @Getter
 @Setter
 public class BtxSecurityProperties {
-    private String[] contextInterceptorExcludePathPatterns = new String[0];
+    private List<String> contextInterceptorExcludePathPatterns = new ArrayList<>();
     private String errorPath = "";
     private String loginPath = "";
     private String noAuthPath = "";

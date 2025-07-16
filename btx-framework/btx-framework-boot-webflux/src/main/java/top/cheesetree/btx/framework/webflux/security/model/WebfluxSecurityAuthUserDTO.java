@@ -3,8 +3,8 @@ package top.cheesetree.btx.framework.webflux.security.model;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import top.cheesetree.btx.framework.webflux.security.core.model.SecurityAuthUserDTO;
-import top.cheesetree.btx.framework.webflux.security.core.model.SecurityUserDTO;
+import top.cheesetree.btx.framework.security.model.SecurityAuthUserDTO;
+import top.cheesetree.btx.framework.security.model.SecurityUserDTO;
 
 /**
  * @author van

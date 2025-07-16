@@ -12,7 +12,7 @@ import java.util.List;
  * @date 2022/4/28 09:20
  * @description TODO
  */
-@ConfigurationProperties("btx.webflux.security.cors")
+@ConfigurationProperties("btx.webflux.cors")
 @Getter
 @Setter
 public class BtxWebfluxCorsProperties {

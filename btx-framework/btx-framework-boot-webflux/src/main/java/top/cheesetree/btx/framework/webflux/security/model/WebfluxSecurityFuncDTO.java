@@ -1,6 +1,7 @@
 package top.cheesetree.btx.framework.webflux.security.model;
 
-import top.cheesetree.btx.framework.webflux.security.core.model.SecurityFuncDTO;
+
+import top.cheesetree.btx.framework.security.model.SecurityFuncDTO;
 
 /**
  * @author van
