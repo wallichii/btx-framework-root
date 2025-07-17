@@ -2,22 +2,33 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>btx-framework</artifactId>
         <groupId>top.cheesetree.btx.framework</groupId>
         <version>${revision}</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>btx-framework-boot</artifactId>
+    <artifactId>btx-framework-boot-webflux-redis</artifactId>
     <name>${project.artifactId}</name>
     <url>https://github.com/cheesetree/btx-framework-root</url>
+    <packaging>jar</packaging>
+
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
+            <groupId>top.cheesetree.btx.framework</groupId>
+            <artifactId>btx-framework-boot-webflux</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>top.cheesetree.btx.framework</groupId>
+            <artifactId>btx-framework-boot-cache</artifactId>
         </dependency>
     </dependencies>
 </project>

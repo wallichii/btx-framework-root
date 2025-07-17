@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
 import top.cheesetree.btx.framework.webflux.security.core.config.BtxWebfluxCacheProperties;
-import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
+import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationInfo;
 
 import java.util.concurrent.TimeUnit;
 
@@ -28,10 +28,10 @@ public class BtxWebfluxCaffeineConfigure {
 
     @Autowired
     @Lazy
-    Cache<String, WebfluxSecurityAuthUserDTO> caffeineCache;
+    Cache<String, AuthenticationInfo> caffeineCache;
 
     @Bean
-    public Cache<String, WebfluxSecurityAuthUserDTO> caffeineCache() {
+    public Cache<String, AuthenticationInfo> caffeineCache() {
         return Caffeine.newBuilder()
                 // 设置最后一次写入或访问后经过固定时间过期
                 .expireAfterWrite(btxWebfluxCacheProperties.getCacheExpire(), TimeUnit.SECONDS)
@@ -44,7 +44,7 @@ public class BtxWebfluxCaffeineConfigure {
     }
 
     @Bean("btxWebfluxCaffeineCache")
-    public BtxWebfluxCaffeineCache<String, WebfluxSecurityAuthUserDTO> btxWebfluxCaffeineCache() {
+    public BtxWebfluxCaffeineCache<String, AuthenticationInfo> btxWebfluxCaffeineCache() {
         return new BtxWebfluxCaffeineCache(caffeineCache);
     }
 

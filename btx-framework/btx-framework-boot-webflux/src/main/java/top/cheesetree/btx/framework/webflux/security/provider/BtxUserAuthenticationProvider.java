@@ -18,6 +18,7 @@ import top.cheesetree.btx.framework.webflux.security.core.model.SimpleAuthorizat
 import top.cheesetree.btx.framework.webflux.security.core.model.StatelessToken;
 import top.cheesetree.btx.framework.webflux.security.model.WebfluxAuthTokenInfo;
 import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
+import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityUserDTO;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -43,8 +44,8 @@ public class BtxUserAuthenticationProvider implements AuthenticationProvider {
 
         CommJSON<? extends SecurityUserDTO> ret = webfluxUserService.login(userid, pwd);
         if (ret.checkSuc()) {
-            WebfluxSecurityAuthUserDTO<SecurityUserDTO, WebfluxAuthTokenInfo> u = new WebfluxSecurityAuthUserDTO<>();
-            u.setUser(ret.getResult());
+            WebfluxSecurityAuthUserDTO<WebfluxSecurityUserDTO, WebfluxAuthTokenInfo> u = new WebfluxSecurityAuthUserDTO<>();
+            u.setUser((WebfluxSecurityUserDTO)ret.getResult());
             WebfluxAuthTokenInfo t = new WebfluxAuthTokenInfo();
             String tk = "";
             switch (btxWebfluxSecurityProperties.getAuthType()) {

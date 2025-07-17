@@ -25,6 +25,7 @@
         <module>btx-framework-dependencies</module>
         <module>btx-framework-boot-security-shiro-redis</module>
         <module>btx-framework-boot-database-reactive</module>
+        <module>btx-framework-boot-webflux-redis</module>
     </modules>
     <packaging>pom</packaging>
     <name>${project.artifactId}</name>
@@ -85,6 +86,11 @@
                 <artifactId>
                     btx-framework-boot-security-shiro
                 </artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>top.cheesetree.btx.framework</groupId>
+                <artifactId>btx-framework-boot-webflux</artifactId>
                 <version>${project.version}</version>
             </dependency>
         </dependencies>

@@ -1,5 +1,6 @@
 package top.cheesetree.btx.framework.webflux.security.core.filter;
 
+import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,8 @@ import top.cheesetree.btx.framework.webflux.security.core.config.BtxWebfluxSecur
 import top.cheesetree.btx.framework.webflux.security.core.context.SecurityContextHolder;
 import top.cheesetree.btx.framework.webflux.security.core.context.SecurityContextImpl;
 import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationInfo;
+import top.cheesetree.btx.framework.webflux.security.core.model.SimpleAuthorizationInfo;
+import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
 
 import static top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebfluxSecurityConst.CACHE_KEY_PREFIX_TOKEN;
 
@@ -54,8 +57,11 @@ public class TokenFilter implements WebFilter {
             if (!StringUtils.hasText(token) || !btxWebfluxCacheFactory.generateCache().containsKey(CACHE_KEY_PREFIX_TOKEN + token)) {
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
                 return Mono.empty();
-            }else{
-                SecurityContextHolder.setContext(new SecurityContextImpl((AuthenticationInfo) btxWebfluxCacheFactory.generateCache().get(CACHE_KEY_PREFIX_TOKEN + token)));
+            } else {
+                AuthenticationInfo auth = btxWebfluxCacheFactory.generateCache().get(CACHE_KEY_PREFIX_TOKEN + token);
+                auth = new SimpleAuthorizationInfo(auth.getCredentials(),
+                        ((JSONObject) auth.getPrincipals()).toJavaObject(WebfluxSecurityAuthUserDTO.class), true);
+                SecurityContextHolder.setContext(new SecurityContextImpl(auth));
             }
         } else {
             response.setStatusCode(HttpStatus.UNAUTHORIZED);

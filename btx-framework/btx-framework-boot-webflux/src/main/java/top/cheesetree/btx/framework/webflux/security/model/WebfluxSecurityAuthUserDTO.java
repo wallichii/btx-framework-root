@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import top.cheesetree.btx.framework.security.model.SecurityAuthUserDTO;
-import top.cheesetree.btx.framework.security.model.SecurityUserDTO;
 
 /**
  * @author van
@@ -14,5 +13,5 @@ import top.cheesetree.btx.framework.security.model.SecurityUserDTO;
 @NoArgsConstructor
 @Getter
 @Setter
-public class WebfluxSecurityAuthUserDTO<U extends SecurityUserDTO, T extends WebfluxAuthTokenInfo> extends SecurityAuthUserDTO<U, T> {
+public class WebfluxSecurityAuthUserDTO<U extends WebfluxSecurityUserDTO, T extends WebfluxAuthTokenInfo> extends SecurityAuthUserDTO<U, T> {
 }
