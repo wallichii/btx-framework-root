@@ -1,6 +1,5 @@
 package top.cheesetree.btx.framework.webflux.security.core.filter;
 
-import com.alibaba.fastjson2.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import top.cheesetree.btx.framework.webflux.security.core.context.SecurityContex
 import top.cheesetree.btx.framework.webflux.security.core.context.SecurityContextImpl;
 import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationInfo;
 import top.cheesetree.btx.framework.webflux.security.core.model.SimpleAuthorizationInfo;
-import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
 
 import static top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebfluxSecurityConst.CACHE_KEY_PREFIX_TOKEN;
 
@@ -60,7 +58,7 @@ public class TokenFilter implements WebFilter {
             } else {
                 AuthenticationInfo auth = btxWebfluxCacheFactory.generateCache().get(CACHE_KEY_PREFIX_TOKEN + token);
                 auth = new SimpleAuthorizationInfo(auth.getCredentials(),
-                        ((JSONObject) auth.getPrincipals()).toJavaObject(WebfluxSecurityAuthUserDTO.class), true);
+                        auth.getPrincipals(), true);
                 SecurityContextHolder.setContext(new SecurityContextImpl(auth));
             }
         } else {
