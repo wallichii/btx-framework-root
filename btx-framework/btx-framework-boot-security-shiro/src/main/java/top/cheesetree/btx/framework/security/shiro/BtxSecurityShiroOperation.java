@@ -22,6 +22,7 @@ import top.cheesetree.btx.framework.security.shiro.config.BtxShiroCachePropertie
 import top.cheesetree.btx.framework.security.shiro.config.BtxShiroProperties;
 import top.cheesetree.btx.framework.security.shiro.model.AuthTokenInfo;
 import top.cheesetree.btx.framework.security.shiro.model.BtxShiroSecurityAuthUserDTO;
+import top.cheesetree.btx.framework.security.shiro.model.BtxShiroSecurityUserDTO;
 import top.cheesetree.btx.framework.security.shiro.realm.BtxSecurityAuthorizingRealm;
 import top.cheesetree.btx.framework.security.shiro.subject.StatelessToken;
 import top.cheesetree.btx.framework.security.shiro.support.cas.CasToken;
@@ -33,7 +34,7 @@ import top.cheesetree.btx.framework.security.shiro.support.cas.CasToken;
  */
 @Slf4j
 @Component
-public class BtxSecurityShiroOperation implements IBtxSecurityOperation {
+public class BtxSecurityShiroOperation<T extends BtxShiroSecurityUserDTO, A extends AuthTokenInfo> implements IBtxSecurityOperation<T, A> {
     @Autowired
     BtxShiroProperties btxShiroProperties;
     @Autowired
@@ -113,7 +114,7 @@ public class BtxSecurityShiroOperation implements IBtxSecurityOperation {
     }
 
     @Override
-    public <T extends SecurityUserDTO> T getUserInfo() {
+    public T getUserInfo() {
         Object u = SecurityUtils.getSubject().getPrincipal();
         if (u != null) {
             return (T) (((BtxShiroSecurityAuthUserDTO) u).getUser());
@@ -123,7 +124,7 @@ public class BtxSecurityShiroOperation implements IBtxSecurityOperation {
     }
 
     @Override
-    public <T extends SecurityUserDTO> CommJSON runas(T user) {
+    public CommJSON runas(T user) {
         Subject subject = SecurityUtils.getSubject();
 
         BtxShiroSecurityAuthUserDTO au = ((BtxShiroSecurityAuthUserDTO) SecurityUtils.getSubject().getPrincipal());
@@ -159,10 +160,10 @@ public class BtxSecurityShiroOperation implements IBtxSecurityOperation {
     }
 
     @Override
-    public AuthTokenInfo getAuthInfo() {
+    public A getAuthInfo() {
         Object u = SecurityUtils.getSubject().getPrincipal();
         if (u != null) {
-            return (AuthTokenInfo) (((BtxShiroSecurityAuthUserDTO) u).getAuthinfo());
+            return (A) (((BtxShiroSecurityAuthUserDTO) u).getAuthinfo());
         } else {
             return null;
         }

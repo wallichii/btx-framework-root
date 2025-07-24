@@ -3,17 +3,17 @@ package top.cheesetree.btx.framework.security.shiro.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import top.cheesetree.btx.framework.security.IBtxSecurityOperation;
 import top.cheesetree.btx.framework.security.controller.SecurityController;
-import top.cheesetree.btx.framework.security.model.SecurityUserDTO;
 import top.cheesetree.btx.framework.security.shiro.model.AuthTokenInfo;
+import top.cheesetree.btx.framework.security.shiro.model.BtxShiroSecurityUserDTO;
 
 /**
  * @author van
  * @date 2022/4/6 15:24
  * @description TODO
  */
-public class BtxSpringSecurityController implements SecurityController {
+public class BtxSpringSecurityController<T extends BtxShiroSecurityUserDTO, A extends AuthTokenInfo> implements SecurityController<T,A> {
     @Autowired
-    IBtxSecurityOperation btxSecurityShiroOperation;
+    IBtxSecurityOperation<T, A> btxSecurityShiroOperation;
 
     @Override
     public String getUserId() {
@@ -21,12 +21,12 @@ public class BtxSpringSecurityController implements SecurityController {
     }
 
     @Override
-    public <T extends SecurityUserDTO> T getUser() {
+    public  T getUser() {
         return btxSecurityShiroOperation.getUserInfo();
     }
 
     @Override
-    public AuthTokenInfo getAuthInfo() {
+    public A getAuthInfo() {
         return btxSecurityShiroOperation.getAuthInfo();
     }
 

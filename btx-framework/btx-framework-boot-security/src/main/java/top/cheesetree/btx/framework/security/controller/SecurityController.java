@@ -8,10 +8,10 @@ import top.cheesetree.btx.framework.security.model.SecurityUserDTO;
  * @Date: 2021/8/27 11:34
  * @Description: TODO
  */
-public interface SecurityController {
+public interface SecurityController<T extends SecurityUserDTO, A extends ValueObject> {
     String getUserId();
 
-    <T extends SecurityUserDTO> T getUser();
+     T getUser();
 
-    <T extends ValueObject> T getAuthInfo();
+     A getAuthInfo();
 }

@@ -10,7 +10,7 @@ import top.cheesetree.btx.framework.security.model.SecurityUserDTO;
  * @Date: 2022/1/13 09:21
  * @Description: TODO
  */
-public interface IBtxSecurityOperation {
+public interface IBtxSecurityOperation<T extends SecurityUserDTO, A extends ValueObject> {
 
     CommJSON<? extends SecurityAuthUserDTO> login(String... args);
 
@@ -18,9 +18,9 @@ public interface IBtxSecurityOperation {
 
     String getUserId();
 
-    <T extends SecurityUserDTO> T getUserInfo();
+    T getUserInfo();
 
-    <T extends ValueObject> T getAuthInfo();
+    A getAuthInfo();
 
-    <T extends SecurityUserDTO>  CommJSON<Object> runas(T user);
+    CommJSON<Object> runas(T user);
 }

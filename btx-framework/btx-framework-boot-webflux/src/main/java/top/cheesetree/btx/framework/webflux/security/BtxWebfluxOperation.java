@@ -1,7 +1,11 @@
 package top.cheesetree.btx.framework.webflux.security;
 
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONObject;
+import com.alibaba.fastjson2.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import top.cheesetree.btx.framework.core.constants.BtxMessage;
@@ -19,6 +23,7 @@ import top.cheesetree.btx.framework.webflux.security.core.model.AuthenticationIn
 import top.cheesetree.btx.framework.webflux.security.core.model.StatelessToken;
 import top.cheesetree.btx.framework.webflux.security.model.WebfluxAuthTokenInfo;
 import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityAuthUserDTO;
+import top.cheesetree.btx.framework.webflux.security.model.WebfluxSecurityUserDTO;
 
 import static top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebfluxSecurityConst.CACHE_KEY_PREFIX_TOKEN;
 
@@ -29,7 +34,9 @@ import static top.cheesetree.btx.framework.webflux.security.core.comm.BtxWebflux
  */
 @Component
 @Slf4j
-public class BtxWebfluxOperation implements IBtxSecurityOperation {
+@ConditionalOnMissingBean(IBtxSecurityOperation.class)
+public class BtxWebfluxOperation<T extends WebfluxSecurityUserDTO, A extends WebfluxAuthTokenInfo> implements IBtxSecurityOperation<T,
+        A> {
     @Autowired
     BtxWebfluxSecurityProperties btxWebfluxSecurityProperties;
     @Autowired
@@ -40,8 +47,8 @@ public class BtxWebfluxOperation implements IBtxSecurityOperation {
     BtxWebfluxCacheFactory btxWebfluxCacheFactory;
 
     @Override
-    public CommJSON<WebfluxSecurityAuthUserDTO> login(String... args) {
-        CommJSON<WebfluxSecurityAuthUserDTO> ret;
+    public CommJSON<WebfluxSecurityAuthUserDTO<T, A>> login(String... args) {
+        CommJSON<WebfluxSecurityAuthUserDTO<T, A>> ret;
 
         StatelessToken t = null;
 
@@ -79,7 +86,7 @@ public class BtxWebfluxOperation implements IBtxSecurityOperation {
                     }
                 }
 
-                ret = new CommJSON<>((WebfluxSecurityAuthUserDTO) auth.getPrincipals());
+                ret = new CommJSON<>((WebfluxSecurityAuthUserDTO<T, A>) auth.getPrincipals());
             } else {
                 ret = new CommJSON<>(BtxWebfluxSecurityMessage.SECURIT_LOGIN_ERROR);
             }
@@ -106,25 +113,30 @@ public class BtxWebfluxOperation implements IBtxSecurityOperation {
     }
 
     @Override
-    public <T extends SecurityUserDTO> T getUserInfo() {
+    public T getUserInfo() {
         Object u = SecurityContextHolder.getContext().getAuthentication().getPrincipals();
         if (u != null) {
-            return (T) (((WebfluxSecurityAuthUserDTO) u).getUser());
+            if (u instanceof JSONObject) {
+                return JSON.parseObject(u.toString(), new TypeReference<WebfluxSecurityAuthUserDTO<T,
+                        WebfluxAuthTokenInfo>>() {
+                }).getUser();
+            }
+            return (T) ((WebfluxSecurityAuthUserDTO) u).getUser();
         } else {
             return null;
         }
     }
 
     @Override
-    public <T extends SecurityUserDTO> CommJSON runas(T user) {
+    public CommJSON runas(T user) {
         return null;
     }
 
     @Override
-    public WebfluxAuthTokenInfo getAuthInfo() {
+    public A getAuthInfo() {
         Object u = SecurityContextHolder.getContext().getAuthentication().getPrincipals();
         if (u != null) {
-            return (WebfluxAuthTokenInfo) ((WebfluxSecurityAuthUserDTO) u).getAuthinfo();
+            return (A) ((WebfluxSecurityAuthUserDTO) u).getAuthinfo();
         } else {
             return null;
         }
