@@ -19,5 +19,6 @@ public class BtxWebfluxSecurityProperties{
     private String tokenKey = BtxWebfluxSecurityConst.AUTHORIZATION_KEY;
     private boolean autoPermission = false;
     private int timeOut = 3600;
+    private boolean enabled = true;
 
 }

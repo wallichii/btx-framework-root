@@ -4,6 +4,7 @@ import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.signers.JWTSignerUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 import top.cheesetree.btx.framework.core.constants.BtxMessage;
 import top.cheesetree.btx.framework.core.json.CommJSON;
@@ -31,6 +32,7 @@ import java.util.UUID;
  */
 @Component
 @Slf4j
+@ConditionalOnProperty(name = "btx.security.webflux.enabled", havingValue = "true", matchIfMissing = true)
 public class BtxUserAuthenticationProvider implements AuthenticationProvider {
     @Autowired
     IBtxSecurityUserService<? extends SecurityUserDTO> webfluxUserService;

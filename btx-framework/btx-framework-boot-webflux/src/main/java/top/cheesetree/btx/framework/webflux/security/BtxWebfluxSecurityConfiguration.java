@@ -1,6 +1,7 @@
 package top.cheesetree.btx.framework.webflux.security;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import java.util.ArrayList;
  */
 @Configuration
 @EnableConfigurationProperties({BtxWebfluxSecurityProperties.class, BtxWebfluxCacheProperties.class})
+@ConditionalOnProperty(name = "btx.security.webflux.enabled", havingValue = "true", matchIfMissing = true)
 public class BtxWebfluxSecurityConfiguration {
     @Autowired
     BtxUserAuthenticationProvider provider;
