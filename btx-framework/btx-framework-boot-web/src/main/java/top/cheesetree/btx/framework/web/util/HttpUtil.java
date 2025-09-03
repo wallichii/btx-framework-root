@@ -249,33 +249,8 @@ public class HttpUtil {
 
         if (isHttps) {
             try {
-                SSLContext sslContext = SSLContext.getInstance("TLS");
-                sslContext.init(
-                        null,
-                        new TrustManager[]{new X509TrustManager() { // 自定义信任管理器
-                            @Override
-                            public void checkClientTrusted(X509Certificate[] chain, String authType) {
-
-                            }
-
-                            @Override
-                            public X509Certificate[] getAcceptedIssuers() {
-                                return null;
-                            }
-
-                            @Override
-                            public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                            }
-                        }},
-                        java.security.SecureRandom.getInstanceStrong()
-                );
-
-                JdkClientHttpRequestFactory hcr = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
-                        .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
-                        .sslContext(sslContext) // 关联自定义 SSL 上下文（可选）
-                        .build());
-                hcr.setReadTimeout(Duration.ofSeconds(timeout));
-                restClient = RestClient.builder().requestFactory(hcr).messageConverters(converters).build();
+                restClient =
+                        RestClient.builder().requestFactory(getSSLFactory(timeout)).messageConverters(converters).build();
             } catch (KeyManagementException | NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
@@ -290,37 +265,44 @@ public class HttpUtil {
         return restClient;
     }
 
+    private static JdkClientHttpRequestFactory getSSLFactory(int timeout) throws NoSuchAlgorithmException,
+            KeyManagementException {
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(
+                null,
+                new TrustManager[]{new X509TrustManager() { // 自定义信任管理器
+                    @Override
+                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+
+                    }
+
+                    @Override
+                    public X509Certificate[] getAcceptedIssuers() {
+                        return null;
+                    }
+
+                    @Override
+                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                    }
+                }},
+                java.security.SecureRandom.getInstanceStrong()
+        );
+
+        JdkClientHttpRequestFactory hcr = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
+                .sslContext(sslContext) // 关联自定义 SSL 上下文（可选）
+                .build());
+        hcr.setReadTimeout(Duration.ofSeconds(timeout));
+
+        return hcr;
+    }
+
     public static RestTemplate geRestTemplate(boolean isHttps, int timeout) {
         RestTemplate restTemplate;
         if (isHttps) {
             try {
-                SSLContext sslContext = SSLContext.getInstance("TLS");
-                sslContext.init(
-                        null,
-                        new TrustManager[]{new X509TrustManager() { // 自定义信任管理器
-                            @Override
-                            public void checkClientTrusted(X509Certificate[] chain, String authType) {
-
-                            }
-
-                            @Override
-                            public X509Certificate[] getAcceptedIssuers() {
-                                return null;
-                            }
-
-                            @Override
-                            public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                            }
-                        }},
-                        java.security.SecureRandom.getInstanceStrong()
-                );
-
-                JdkClientHttpRequestFactory hcr = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
-                        .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
-                        .sslContext(sslContext) // 关联自定义 SSL 上下文（可选）
-                        .build());
-                hcr.setReadTimeout(Duration.ofSeconds(timeout));
-                restTemplate = new RestTemplate(hcr);
+                restTemplate = new RestTemplate(getSSLFactory(timeout));
             } catch (KeyManagementException | NoSuchAlgorithmException e) {
                 throw new RuntimeException(e);
             }
