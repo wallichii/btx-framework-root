@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
+import org.springframework.http.client.JdkClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
@@ -12,10 +13,17 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
-import top.cheesetree.btx.framework.web.http.HttpsClientRequestFactory;
 import top.cheesetree.btx.framework.web.model.dto.FileInfoDTO;
 
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
+import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -193,6 +201,16 @@ public class HttpUtil {
         return httpRequest(url, params, headers, to, isHttps, HttpMethod.DELETE);
     }
 
+    public static <T> String httpPatch(String url, HashMap<String, String> headers, T params,
+                                       @Deprecated boolean isHttps) {
+        return httpPatch(url, headers, params, DEF_FILE_TIMEOUT, isHttps);
+    }
+
+    public static <T> String httpPatch(String url, HashMap<String, String> headers, T params, int to,
+                                       @Deprecated boolean isHttps) {
+        return httpRequest(url, params, headers, to, isHttps, HttpMethod.PATCH);
+    }
+
     public static <T> String httpRequest(String url, T params, HashMap<String, String> headers, int to,
                                          @Deprecated boolean isHttps,
                                          HttpMethod method) {
@@ -230,13 +248,41 @@ public class HttpUtil {
         converters.add(new StringHttpMessageConverter(StandardCharsets.UTF_8));
 
         if (isHttps) {
-            HttpsClientRequestFactory hcr = new HttpsClientRequestFactory();
-            hcr.setConnectTimeout(DEF_CON_TIMEOUT);
-            hcr.setReadTimeout(timeout);
-            restClient = RestClient.builder().requestFactory(hcr).messageConverters(converters).build();
+            try {
+                SSLContext sslContext = SSLContext.getInstance("TLS");
+                sslContext.init(
+                        null,
+                        new TrustManager[]{new X509TrustManager() { // 自定义信任管理器
+                            @Override
+                            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+
+                            }
+
+                            @Override
+                            public X509Certificate[] getAcceptedIssuers() {
+                                return null;
+                            }
+
+                            @Override
+                            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                            }
+                        }},
+                        java.security.SecureRandom.getInstanceStrong()
+                );
+
+                JdkClientHttpRequestFactory hcr = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
+                        .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
+                        .sslContext(sslContext) // 关联自定义 SSL 上下文（可选）
+                        .build());
+                hcr.setReadTimeout(Duration.ofSeconds(timeout));
+                restClient = RestClient.builder().requestFactory(hcr).messageConverters(converters).build();
+            } catch (KeyManagementException | NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
         } else {
-            SimpleClientHttpRequestFactory hrf = new SimpleClientHttpRequestFactory();
-            hrf.setConnectTimeout(DEF_CON_TIMEOUT);
+            JdkClientHttpRequestFactory hrf = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
+                    .build());
             hrf.setReadTimeout(timeout);
             restClient = RestClient.builder().requestFactory(hrf).messageConverters(converters).build();
         }
@@ -247,10 +293,37 @@ public class HttpUtil {
     public static RestTemplate geRestTemplate(boolean isHttps, int timeout) {
         RestTemplate restTemplate;
         if (isHttps) {
-            HttpsClientRequestFactory hcr = new HttpsClientRequestFactory();
-            hcr.setConnectTimeout(DEF_CON_TIMEOUT);
-            hcr.setReadTimeout(timeout);
-            restTemplate = new RestTemplate(hcr);
+            try {
+                SSLContext sslContext = SSLContext.getInstance("TLS");
+                sslContext.init(
+                        null,
+                        new TrustManager[]{new X509TrustManager() { // 自定义信任管理器
+                            @Override
+                            public void checkClientTrusted(X509Certificate[] chain, String authType) {
+
+                            }
+
+                            @Override
+                            public X509Certificate[] getAcceptedIssuers() {
+                                return null;
+                            }
+
+                            @Override
+                            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+                            }
+                        }},
+                        java.security.SecureRandom.getInstanceStrong()
+                );
+
+                JdkClientHttpRequestFactory hcr = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
+                        .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
+                        .sslContext(sslContext) // 关联自定义 SSL 上下文（可选）
+                        .build());
+                hcr.setReadTimeout(Duration.ofSeconds(timeout));
+                restTemplate = new RestTemplate(hcr);
+            } catch (KeyManagementException | NoSuchAlgorithmException e) {
+                throw new RuntimeException(e);
+            }
         } else {
             SimpleClientHttpRequestFactory hrf = new SimpleClientHttpRequestFactory();
             hrf.setConnectTimeout(DEF_CON_TIMEOUT);
