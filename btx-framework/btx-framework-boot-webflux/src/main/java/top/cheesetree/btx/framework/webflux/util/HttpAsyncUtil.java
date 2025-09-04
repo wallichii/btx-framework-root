@@ -12,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.ExchangeStrategies;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Flux;
 import reactor.netty.http.client.HttpClient;
@@ -116,6 +117,10 @@ public class HttpAsyncUtil {
     }
 
     public static WebClient getWebClient(boolean isHttps, int timeout) {
+        return getWebClient(isHttps, timeout, 1024 * 1024);
+    }
+
+    public static WebClient getWebClient(boolean isHttps, int timeout, int maxResponseSize) {
         WebClient webClient;
 
         HttpReqDTO r = HttpReqDTO.builder().https(isHttps).timeout(timeout).build();
@@ -138,7 +143,14 @@ public class HttpAsyncUtil {
                         HttpClient.create().option(ChannelOption.CONNECT_TIMEOUT_MILLIS, DEF_CON_TIMEOUT).responseTimeout(Duration.ofSeconds(timeout));
             }
 
-            webClient = WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).build();
+            ExchangeStrategies strategies = ExchangeStrategies.builder()
+                    .codecs(configurer -> {
+                        configurer.defaultCodecs().maxInMemorySize(maxResponseSize);
+                    })
+                    .build();
+
+            webClient =
+                    WebClient.builder().clientConnector(new ReactorClientHttpConnector(httpClient)).exchangeStrategies(strategies).build();
             webClientMap.put(r, webClient);
         }
 
