@@ -1,4 +1,4 @@
-package top.cheesetree.btx.framework.web.util;
+package top.cheesetree.btx.framework.webflux.util;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
@@ -13,7 +13,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestTemplate;
-import top.cheesetree.btx.framework.web.model.dto.FileInfoDTO;
+import top.cheesetree.btx.framework.webflux.model.dto.FileInfoDTO;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
@@ -93,8 +93,7 @@ public class HttpUtil {
         return httpPost(url, param, headers, to, isHttps);
     }
 
-    public static String httpUploadFile(String url, FileInfoDTO info,
-                                        @Deprecated boolean isHttps) {
+    public static String httpUploadFile(String url, FileInfoDTO info, @Deprecated boolean isHttps) {
         return httpUploadFile(url, info, null, DEF_FILE_TIMEOUT, isHttps);
     }
 
@@ -120,15 +119,10 @@ public class HttpUtil {
 
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
         ContentDisposition contentDisposition =
-                ContentDisposition
-                        .builder("form-data")
-                        .filename(info.getFilename())
-                        .name(filekey)
-                        .build();
+                ContentDisposition.builder("form-data").filename(info.getFilename()).name(filekey).build();
 
         params.add(HttpHeaders.CONTENT_DISPOSITION, contentDisposition.toString());
-        HttpEntity<Resource> fileEntity =
-                new HttpEntity<>(new ByteArrayResource(info.getFiledata()), params);
+        HttpEntity<Resource> fileEntity = new HttpEntity<>(new ByteArrayResource(info.getFiledata()), params);
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add(filekey, fileEntity);
@@ -150,8 +144,7 @@ public class HttpUtil {
         return ret;
     }
 
-    public static String httpGet(String url, HashMap<String, String> headers, int to, @Deprecated boolean isHttps
-    ) {
+    public static String httpGet(String url, HashMap<String, String> headers, int to, @Deprecated boolean isHttps) {
         String ret = "";
         RestClient restClient = getRestClient(url.startsWith("https"), to);
         HttpHeaders header = new HttpHeaders();
@@ -175,8 +168,7 @@ public class HttpUtil {
     }
 
     public static <T> String httpPost(String url, T params, HashMap<String, String> headers, int to,
-                                      @Deprecated boolean isHttps
-    ) {
+                                      @Deprecated boolean isHttps) {
         return httpRequest(url, params, headers, to, isHttps, HttpMethod.POST);
     }
 
@@ -212,8 +204,7 @@ public class HttpUtil {
     }
 
     public static <T> String httpRequest(String url, T params, HashMap<String, String> headers, int to,
-                                         @Deprecated boolean isHttps,
-                                         HttpMethod method) {
+                                         @Deprecated boolean isHttps, HttpMethod method) {
         String ret = "";
         RestClient restClient = getRestClient(url.startsWith("https"), to);
         HttpHeaders header = new HttpHeaders();
@@ -255,8 +246,8 @@ public class HttpUtil {
                 throw new RuntimeException(e);
             }
         } else {
-            JdkClientHttpRequestFactory hrf = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
-                    .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
+            JdkClientHttpRequestFactory hrf =
+                    new JdkClientHttpRequestFactory(HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
                     .build());
             hrf.setReadTimeout(timeout);
             restClient = RestClient.builder().requestFactory(hrf).messageConverters(converters).build();
@@ -269,28 +260,25 @@ public class HttpUtil {
             KeyManagementException {
 
         SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(
-                null,
-                new TrustManager[]{new X509TrustManager() { // 自定义信任管理器
-                    @Override
-                    public void checkClientTrusted(X509Certificate[] chain, String authType) {
+        sslContext.init(null, new TrustManager[]{new X509TrustManager() { // 自定义信任管理器
+            @Override
+            public void checkClientTrusted(X509Certificate[] chain, String authType) {
 
-                    }
+            }
 
-                    @Override
-                    public X509Certificate[] getAcceptedIssuers() {
-                        return null;
-                    }
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return null;
+            }
 
-                    @Override
-                    public void checkServerTrusted(X509Certificate[] certs, String authType) {
-                    }
-                }},
-                java.security.SecureRandom.getInstanceStrong()
-        );
+            @Override
+            public void checkServerTrusted(X509Certificate[] certs, String authType) {
+            }
+        }}, java.security.SecureRandom.getInstanceStrong());
 
-        JdkClientHttpRequestFactory hcr = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
+        JdkClientHttpRequestFactory hcr =
+                new JdkClientHttpRequestFactory(HttpClient.newBuilder().connectTimeout(Duration.ofSeconds(timeout))
+                        // 连接超时：5秒
                 .sslContext(sslContext) // 关联自定义 SSL 上下文（可选）
                 .build());
         hcr.setReadTimeout(Duration.ofSeconds(timeout));
