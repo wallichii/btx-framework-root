@@ -19,6 +19,7 @@
 
     <properties>
         <org.apereo.cas.version>4.0.4</org.apereo.cas.version>
+        <nimbus.jose.jwt.version>9.37.4</nimbus.jose.jwt.version>
     </properties>
 
     <dependencies>
@@ -43,7 +44,16 @@
                     <groupId>org.bouncycastle</groupId>
                     <artifactId>bcprov-jdk15on</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>com.nimbusds</groupId>
+                    <artifactId>nimbus-jose-jwt</artifactId>
+                </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.nimbusds</groupId>
+            <artifactId>nimbus-jose-jwt</artifactId>
+            <version>${nimbus.jose.jwt.version}</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>

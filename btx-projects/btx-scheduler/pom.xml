@@ -11,7 +11,6 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>btx-scheduler</artifactId>
-    <groupId>top.cheesetree.btx.project</groupId>
     <packaging>pom</packaging>
     <modules>
         <module>btx-scheduler-xxl</module>
