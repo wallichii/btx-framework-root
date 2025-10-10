@@ -29,7 +29,7 @@
         <cn.hutool.version>5.8.36</cn.hutool.version>
         <org.apache.shiro.version>1.13.0</org.apache.shiro.version>
         <org.jasig.cas.client.version>3.6.4</org.jasig.cas.client.version>
-        <com.fasterxml.jackson.version>2.13.5</com.fasterxml.jackson.version>
+        <com.fasterxml.jackson.version>2.15.4</com.fasterxml.jackson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <org.yaml.snakeyaml.version>1.33</org.yaml.snakeyaml.version>
         <tomcat.embed.version>9.0.106</tomcat.embed.version>
@@ -109,6 +109,16 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${com.fasterxml.jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
                 <version>${com.fasterxml.jackson.version}</version>
             </dependency>
             <dependency>
