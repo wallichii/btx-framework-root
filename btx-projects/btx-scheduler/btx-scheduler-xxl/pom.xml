@@ -18,7 +18,7 @@
     <url>https://github.com/cheesetree/btx-framework-root</url>
 
     <properties>
-        <xxl.job.version>2.4.2</xxl.job.version>
+        <xxl.job.version>3.2.0</xxl.job.version>
         <netty.version>4.1.125.Final</netty.version>
     </properties>
 
