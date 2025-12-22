@@ -53,14 +53,17 @@
     </dependencies>
 
     <distributionManagement>
-        <snapshotRepository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
-        </snapshotRepository>
         <repository>
-            <id>ossrh</id>
-            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+            <id>releases</id>
+            <name>Team Nexus Release Repository</name>
+            <url>http://10.116.0.51:32654/repository/nb-release/</url>
         </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <name>Team Nexus Snapshot Repository</name>
+            <url>http://10.116.0.51:32654/repository/nb-snapshots/</url>
+            <uniqueVersion>false</uniqueVersion>
+        </snapshotRepository>
     </distributionManagement>
 
     <build>

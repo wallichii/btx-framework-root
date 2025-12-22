@@ -25,14 +25,16 @@
 
         <lombok.version>1.18.28</lombok.version>
         <com.alibaba.fastjson.version>1.2.83</com.alibaba.fastjson.version>
-        <mybatis-plus-boot.version>3.5.1</mybatis-plus-boot.version>
-        <mybatis-plus.version>3.5.1</mybatis-plus.version>
-        <cn.hutool.version>5.8.20</cn.hutool.version>
+        <mybatis-plus-boot.version>3.5.3.1</mybatis-plus-boot.version>
+        <mybatis-plus.version>3.5.3.1</mybatis-plus.version>
+        <cn.hutool.version>5.8.25</cn.hutool.version>
         <org.apache.shiro.version>1.13.0</org.apache.shiro.version>
         <org.jasig.cas.client.version>3.6.4</org.jasig.cas.client.version>
         <com.fasterxml.jackson.version>2.13.4.2</com.fasterxml.jackson.version>
         <okhttp.version>4.9.3</okhttp.version>
         <org.yaml.snakeyaml.version>1.32</org.yaml.snakeyaml.version>
+        <tomcat.version>9.0.113</tomcat.version>
+        <io.netty.version>4.1.130.Final</io.netty.version>
     </properties>
 
     <dependencyManagement>
@@ -41,6 +43,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>${spring-boot.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${io.netty.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -98,6 +107,61 @@
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
                 <version>${org.yaml.snakeyaml.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-core</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-el</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.tomcat.embed</groupId>
+                <artifactId>tomcat-embed-websocket</artifactId>
+                <version>${tomcat.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-common</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-handler</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec-http</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-resolver</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-transport-native-unix-common</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-buffer</artifactId>
+                <version>${io.netty.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-codec</artifactId>
+                <version>${io.netty.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
