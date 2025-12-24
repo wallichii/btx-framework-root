@@ -18,6 +18,7 @@
         <nacos.client.version>2.2.2</nacos.client.version>
         <nacos.springboot.version>0.2.12</nacos.springboot.version>
         <nacos.spring.context.version>1.1.2</nacos.spring.context.version>
+        <commons.lang3.version>3.18.0</commons.lang3.version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,11 @@
             <groupId>com.alibaba.nacos</groupId>
             <artifactId>nacos-client</artifactId>
             <version>${nacos.client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+            <version>${commons.lang3.version}</version>
         </dependency>
     </dependencies>
 </project>

@@ -32,9 +32,9 @@
         <com.fasterxml.jackson.version>2.15.4</com.fasterxml.jackson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <org.yaml.snakeyaml.version>1.33</org.yaml.snakeyaml.version>
-        <tomcat.embed.version>9.0.106</tomcat.embed.version>
+        <tomcat.embed.version>9.0.113</tomcat.embed.version>
         <logback.version>1.2.13</logback.version>
-        <netty.version>4.1.125.Final</netty.version>
+        <netty.version>4.1.129.Final</netty.version>
         <bcprov.jdk18on.version>1.79</bcprov.jdk18on.version>
         <spring.version>5.3.39</spring.version>
     </properties>

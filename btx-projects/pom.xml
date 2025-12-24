@@ -20,6 +20,7 @@
         <module>btx-mail</module>
         <module>btx-dts</module>
         <module>btx-nacos</module>
+        <module>btx-demo</module>
     </modules>
 
     <properties>

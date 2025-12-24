@@ -18,7 +18,7 @@
     <packaging>jar</packaging>
 
     <properties>
-
+        <commons.beanutils.version>1.11.0</commons.beanutils.version>
     </properties>
 
     <dependencies>
@@ -56,6 +56,11 @@
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-databind</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-beanutils</groupId>
+            <artifactId>commons-beanutils</artifactId>
+            <version>${commons.beanutils.version}</version>
         </dependency>
     </dependencies>
 
