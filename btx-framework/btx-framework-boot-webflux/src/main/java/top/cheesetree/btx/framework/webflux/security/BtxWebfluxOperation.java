@@ -114,7 +114,8 @@ public class BtxWebfluxOperation<T extends WebfluxSecurityUserDTO, A extends Web
 
     @Override
     public T getUserInfo() {
-        Object u = SecurityContextHolder.getContext().getAuthentication().getPrincipals();
+        Object u = SecurityContextHolder.getContext().getAuthentication();
+        u = u == null ? null : ((AuthenticationInfo) u).getPrincipals();
         if (u != null) {
             if (u instanceof JSONObject) {
                 return JSON.parseObject(u.toString(), new TypeReference<WebfluxSecurityAuthUserDTO<T,
@@ -134,7 +135,8 @@ public class BtxWebfluxOperation<T extends WebfluxSecurityUserDTO, A extends Web
 
     @Override
     public A getAuthInfo() {
-        Object u = SecurityContextHolder.getContext().getAuthentication().getPrincipals();
+        Object u = SecurityContextHolder.getContext().getAuthentication();
+        u = u == null ? null : ((AuthenticationInfo) u).getPrincipals();
         if (u != null) {
             return (A) ((WebfluxSecurityAuthUserDTO) u).getAuthinfo();
         } else {
