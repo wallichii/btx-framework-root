@@ -48,7 +48,7 @@ public class BtxSecurityShiroCorsFilter extends OncePerRequestFilter {
         //允许请求方式
         response.setHeader(BtxSecurityShiroConst.ACCESS_CONTROL_ALLOW_METHODS,
                 btxShiroCorsProperties.getMethods().length > 0 ? String.join(",",
-                        btxShiroCorsProperties.getMethods()) : request.getMethod());
+                        btxShiroCorsProperties.getMethods()) : request.getMethod()+",OPTIONS");
 
         response.setHeader(BtxSecurityShiroConst.ACCESS_CONTROL_ALLOW_HEADERS,
                 btxShiroCorsProperties.getAllowHeaders().length > 0 ?
