@@ -56,7 +56,65 @@ graph TB
     WebFlux --> WebFluxRedis[btx-framework-boot-webflux-redis]
 ```
 
-### 2.3 核心设计理念
+### 2.3 各模块依赖说明
+
+```mermaid
+graph TB
+    subgraph "框架内部依赖关系"
+        Core[btx-framework-core] --> Boot[btx-framework-boot]
+        Core --> Security[btx-framework-boot-security]
+        Core --> Cache[btx-framework-boot-cache]
+        Boot --> Web[btx-framework-boot-web]
+        Security --> Shiro[btx-framework-boot-security-shiro]
+        Web --> Shiro
+        Cache --> ShiroRedis[btx-framework-boot-security-shiro-redis]
+        Shiro --> ShiroRedis
+        Boot --> Database[btx-framework-boot-database]
+        Database --> Hikari[btx-framework-boot-database-hikari]
+        Boot --> WebFlux[btx-framework-boot-webflux]
+        Security --> WebFlux
+        Boot --> Session[btx-framework-boot-session]
+        Cache --> Session
+    end
+
+    subgraph "核心外部依赖"
+        FJ[FastJSON2] --> Web
+        FJ --> WebFlux
+        FJ --> Cache
+        SBW[spring-boot-starter-web] --> Web
+        SBWF[spring-boot-starter-webflux] --> WebFlux
+        SBR[spring-boot-starter-data-redis] --> Cache
+        MP[mybatis-plus-spring-boot3-starter] --> Database
+        ShiroLib[Shiro jakarta] --> Shiro
+        CASLib[CAS Client] --> Shiro
+        BCLib[Bouncy Castle] --> Shiro
+        SSR[spring-session-data-redis] --> Session
+        Caffeine[caffeine] --> WebFlux
+        JWT[hutool-jwt] --> WebFlux
+    end
+
+    style Core fill:#e1f5fe
+    style Boot fill:#e1f5fe
+    style Web fill:#e1f5fe
+    style Cache fill:#e1f5fe
+    style Security fill:#e1f5fe
+    style Shiro fill:#e1f5fe
+    style ShiroRedis fill:#e1f5fe
+    style Database fill:#e1f5fe
+    style Hikari fill:#e1f5fe
+    style WebFlux fill:#e1f5fe
+    style Session fill:#e1f5fe
+```
+
+**关键依赖说明：**
+- **FastJSON2**：在 web、webflux、cache 三个模块中使用，替代 Jackson 作为默认 JSON 处理框架
+- **Shiro 版本**：使用 Jakarta 分类器的 Shiro（`.jakarta`），兼容 Spring Boot 3.x Jakarta Servlet API
+- **CAS 客户端**：`cas-client-support-saml` 4.0.4，排除旧版 Bouncy Castle 和 Nimbus JWT
+- **MyBatis-Plus**：`mybatis-plus-spring-boot3-starter` 适配 Spring Boot 3.x
+- **Session 模块**：通过 cache 模块间接引入 Redis 依赖
+- **WebFlux 模块**：caffeine 用于本地缓存，hutool-jwt 用于 JWT 令牌支持
+
+### 2.4 核心设计理念
 
 | 理念 | 说明 |
 |------|------|
@@ -309,6 +367,31 @@ flowchart LR
 | [`BtxSecurityShiroUserFilter`](btx-framework/btx-framework-boot-security-shiro/src/main/java/top/cheesetree/btx/framework/security/shiro/filter/BtxSecurityShiroUserFilter.java:24) | 通用 | 用户身份验证过滤器，支持 AJAX 响应 |
 | [`BtxSecurityShiroPermissionsFilter`](btx-framework/btx-framework-boot-security-shiro/src/main/java/top/cheesetree/btx/framework/security/shiro/filter/BtxSecurityShiroPermissionsFilter.java:25) | 通用 | 权限授权过滤器，支持 AJAX 响应 |
 
+**各过滤器实现详解：**
+
+**`BtxSecurityShiroTokenFilter`** 继承 `AuthenticatingFilter`，核心实现：
+- **Token 提取**（`getToken`）：先尝试从 HTTP Header 中读取 `tokenKey` 指定的请求头，若为空则从请求参数中获取
+- **Token 创建**（`createToken`）：若忽略 Token 模式或 Token 不为空，创建 `StatelessToken(token)` 提交认证
+- **访问控制**（`isAccessAllowed`）：若 `ignoreToken=true` 或 Token 值存在，调用 `executeLogin` 执行登录流程
+- **拒绝处理**（`onAccessDenied`）：判断是否为 AJAX 请求，是则返回 401 JSON 响应，否则重定向到 `errorurl`
+
+**`BtxSecurityShiroPermissionsFilter`** 继承 `PermissionsAuthorizationFilter`：
+- 重写 `onAccessDenied` 方法，对于 AJAX 请求直接返回 403 JSON 响应（`SECURIT_UNAUTH_ERROR`），非 AJAX 请求则调用父类默认处理
+
+**`BtxSecurityShiroUserFilter`** 继承 `UserFilter`：
+- 重写 `onAccessDenied` 方法，AJAX 请求返回 401 JSON 响应，非 AJAX 请求调用父类进行页面跳转
+
+**`BtxSecurityShiroFormFilter`** 继承 `FormAuthenticationFilter`：
+- 重写 `onAccessDenied` 方法，支持 AJAX 请求的 JSON 响应，非 AJAX 请求执行原始表单登录跳转逻辑
+
+**`BtxSecurityShiroCasFilter`** 继承 `AuthenticatingFilter`：
+- **Token 创建**：从请求参数中获取 `ticket` 参数（CAS 票据），创建 `CasToken(ticket)`
+- **登录失败处理**（`onLoginFailure`）：复杂的三路分支逻辑
+  1. 用户已认证/已记住/跳过验证 → 直接重定向到成功页面
+  2. 带有 `ticket` 参数但验证失败 → 重定向到 `errorurl` 并附带错误消息
+  3. 无 `ticket` 参数（首次访问）→ 重定向到 CAS 登录页 `serverLoginUrl?service=当前URL`
+- **登录成功**：重定向到成功页面
+
 #### 6.3.4 Token 认证流程
 
 ```mermaid
@@ -364,9 +447,48 @@ sequenceDiagram
 - [`RedisShiroCacheManager`](btx-framework/btx-framework-boot-security-shiro-redis/src/main/java/top/cheesetree/btx/framework/security/shiro/cache/redis/RedisShiroCacheManager.java:18)：实现 `CacheManager` 接口，创建 `RedisShiroCache`
 - [`RedisShiroCache`](btx-framework/btx-framework-boot-security-shiro-redis/src/main/java/top/cheesetree/btx/framework/security/shiro/cache/redis/RedisShiroCache.java:21)：实现 `Cache<K,V>` 接口，使用 RedisTemplate 操作缓存，支持 Lua 脚本实现原子性 get-del 操作
 
-### 6.5 Shiro Session 无状态化
+**`RedisShiroCache` 实现细节：**
+- **get/put**：使用 `redisTemplate.opsForValue()` 操作，Key 格式为 `prefix:cacheKey`
+- **put 设置过期**：调用 `set(rk, v, expire, TimeUnit.SECONDS)` 写入时同步设置 TTL
+- **remove 原子删除**：使用 Lua 脚本 `getdel.lua` 实现，先获取值再删除，保证原子性
+- **keys 扫描**：使用 Redis `SCAN` 命令通过前缀匹配查找所有 Key（替代 KEYS 命令避免阻塞）
+- **clear 清空**：通过 `keys()` 获取所有 Key 后调用 `delete` 批量删除
 
-[`StatelessDefaultSubjectFactory`](btx-framework/btx-framework-boot-security-shiro/src/main/java/top/cheesetree/btx/framework/security/shiro/subject/StatelessDefaultSubjectFactory.java:12) 在 `TOKEN` / `EXT_TOKEN` / `JWT` 模式下禁用 Session 创建，实现无状态认证。
+### 6.5 辅助组件实现详解
+
+#### 6.5.1 [`StatelessToken`](btx-framework/btx-framework-boot-security-shiro/src/main/java/top/cheesetree/btx/framework/security/shiro/subject/StatelessToken.java:16)
+
+继承 `UsernamePasswordToken`，扩展了一个 `token` 字段（默认 UUID 随机生成），用于无状态 Token 认证。提供了多种构造函数：
+- `StatelessToken(String token)` — EXT_TOKEN 模式，仅传入 Token 串
+- `StatelessToken(String username, String password)` — TOKEN/SESSION 模式，传入用户名+密码
+- `StatelessToken(String username, char[] password)` — 支持 char 数组密码，更安全
+
+支持 `getUsername()` 和 `getToken()` 双重获取用户标识。
+
+#### 6.5.2 [`StatelessDefaultSubjectFactory`](btx-framework/btx-framework-boot-security-shiro/src/main/java/top/cheesetree/btx/framework/security/shiro/subject/StatelessDefaultSubjectFactory.java:12)
+
+继承 `DefaultWebSubjectFactory`，在 `createSubject()` 方法中调用 `context.setSessionCreationEnabled(false)`，彻底禁用 Session 创建。在 `TOKEN` / `EXT_TOKEN` / `JWT` 模式下配合 `BtxShiroConfiguration` 装配使用，实现无状态认证。
+
+#### 6.5.3 [`BtxModularRealmAuthenticator`](btx-framework/btx-framework-boot-security-shiro/src/main/java/top/cheesetree/btx/framework/security/shiro/pam/BtxModularRealmAuthenticator.java:21)
+
+继承 `ModularRealmAuthenticator`，重写 `doMultiRealmAuthentication` 方法，核心改进点：
+- 遍历多个 Realm 时，若某 Realm 抛出 `AccountException` 或 `AuthenticationException`，**立即抛出**而不是继续尝试下一个 Realm
+- 使用 `FirstSuccessfulStrategy` 认证策略，任一 Realm 认证成功后即可
+
+#### 6.5.4 [`BtxNoAuthCredentialsMatcher`](btx-framework/btx-framework-boot-security-shiro/src/main/java/top/cheesetree/btx/framework/security/shiro/matcher/BtxNoAuthCredentialsMatcher.java)
+
+空凭证匹配器，继承 `AllowAllCredentialsMatcher`，不验证凭证（密码）匹配，密码验证已在 `IBtxSecurityUserService.login()` 中完成，避免 Realm 重复校验。
+
+#### 6.5.5 [`BtxSecurityShiroOperation.login()`](btx-framework/btx-framework-boot-security-shiro/src/main/java/top/cheesetree/btx/framework/security/shiro/BtxSecurityShiroOperation.java:44)
+
+`login(String... args)` 方法实现无状态登录，核心逻辑：
+1. **参数解析**：args[0]=用户名/Token/Ticket, args[1]=密码, args[2]=认证类型（可选覆盖配置）
+2. **Token 创建**：根据 `AuthType` 创建不同类型的 `AuthenticationToken`：
+   - `TOKEN/SESSION` → `StatelessToken(username, password)`
+   - `EXT_TOKEN` → `StatelessToken(token)`
+   - `CAS` → `CasToken(null, ticket)`
+3. **执行登录**：调用 `SecurityUtils.getSubject().login(t)` 触发 Realm 认证
+4. **结果处理**：认证成功返回用户信息，失败则解析异常消息（支持 JSON 格式的业务异常）
 
 ## 7. 缓存模块 (btx-framework-boot-cache)
 
@@ -402,12 +524,34 @@ graph TB
 - 按缓存名称独立配置 TTL（通过 `btx.redis.cache.caches.<cache-name>.*`）
 - 动态创建缓存配置
 
-#### 7.2.3 [`RedisTemplateFactoryImpl`](btx-framework/btx-framework-boot-cache/src/main/java/top/cheesetree/btx/framework/cache/redis/RedisTemplateFactoryImpl.java:23)
+#### 7.2.3 序列化器体系
+
+**`BtxRedisSerializer`** 组合序列化器容器，持有 keySerializer、hashKeySerializer、valueSerializer、hashValueSerializer、stringSerializer 五个序列化器实例，供 `RedisTemplate` 配置使用。
+
+**`BtxFastJsonRedisSerializer<T>`** 基于 FastJSON2 的泛型序列化器：
+- 实现 `RedisSerializer<T>` 接口
+- `serialize`：使用 `JSON.toJSONBytes(source, JSONWriter.Feature.WriteMapNullValue)` 将对象序列化为字节数组
+- `deserialize`：使用 `JSON.parseObject(bytes, clazz, JSONReader.Feature.FieldBased)` 反序列化，支持默认构造函数缺失的场景
+- 可指定目标类型 `clazz`，支持复杂泛型对象的反序列化
+
+**`BtxKeyStringRedisSerializer`** 带前缀的 Key 序列化器：
+- 继承 `StringRedisSerializer`，在序列化 key 时自动拼接前缀 `prefix + ":" + key`
+- 在反序列化 key 时移除前缀
+- 用于区分不同业务模块的 Redis Key 空间
+
+**`BtxStringRedisSerializer`** 简化的 String 序列化包装器，使用 `StandardCharsets.UTF_8` 编码。
+
+#### 7.2.4 [`RedisTemplateFactoryImpl`](btx-framework/btx-framework-boot-cache/src/main/java/top/cheesetree/btx/framework/cache/redis/RedisTemplateFactoryImpl.java:23)
 
 工厂类，支持按 Key/Value 类型生成对应的 `RedisTemplate`：
-- Key 为 String 时使用 `BtxKeyStringRedisSerializer`（支持前缀）
-- Value 为非 String 时使用 `BtxFastJsonRedisSerializer`
-- 内部使用 `ConcurrentHashMap` 缓存已创建的 RedisTemplate 实例
+- 使用 `KeyValueMapKey`（包含 keyClass, valueClass, needprefix, btxRedisSerializer）作为缓存的 Map Key
+- **自动选择序列化器逻辑**：
+  - Key 为 String 且 needprefix=true → `BtxKeyStringRedisSerializer(prefix)`
+  - Key 为 String 且 needprefix=false → `StringRedisSerializer`
+  - Key 为非 String → `BtxFastJsonRedisSerializer<TKey>(keyClz)`
+  - Value 为 String → `StringRedisSerializer`
+  - Value 为非 String → `BtxFastJsonRedisSerializer<TValue>(valueClz)`
+- 内部使用 `ConcurrentHashMap` 缓存已创建的 RedisTemplate 实例，避免重复创建
 
 #### 7.2.4 可配置属性
 
