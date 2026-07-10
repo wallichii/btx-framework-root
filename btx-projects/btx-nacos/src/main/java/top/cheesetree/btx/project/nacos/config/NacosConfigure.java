@@ -1,8 +1,8 @@
 package top.cheesetree.btx.project.nacos.config;
 
-import com.alibaba.nacos.spring.context.annotation.config.NacosPropertySource;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Configuration;
+import top.cheesetree.btx.project.nacos.spring.context.annotation.config.NacosPropertySource;
 
 /**
  * @author van

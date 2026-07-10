@@ -14,7 +14,6 @@
     <artifactId>btx-framework-local</artifactId>
     <packaging>pom</packaging>
     <modules>
-        <module>btx-framework-boot-web-tongweb</module>
     </modules>
 
     <properties>
@@ -29,13 +28,6 @@
                 <version>${project.version}</version>
                 <scope>import</scope>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>com.tongweb</groupId>
-                <artifactId>tongweb-embed-dependencies</artifactId>
-                <version>${tongweb.version}</version>
-                <type>pom</type>
-                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

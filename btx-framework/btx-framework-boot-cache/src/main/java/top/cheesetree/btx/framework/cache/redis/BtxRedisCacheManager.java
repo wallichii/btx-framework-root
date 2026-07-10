@@ -1,6 +1,5 @@
 package top.cheesetree.btx.framework.cache.redis;
 
-import com.alibaba.fastjson2.support.spring6.data.redis.GenericFastJsonRedisSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.cache.RedisCache;
@@ -52,7 +51,7 @@ public class BtxRedisCacheManager extends RedisCacheManager implements BtxCacheM
 
 
         redisCacheConfiguration =
-                redisCacheConfiguration.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericFastJsonRedisSerializer()));
+                redisCacheConfiguration.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new BtxFastJsonRedisSerializer()));
         return redisCacheConfiguration;
     }
 

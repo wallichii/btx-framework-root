@@ -12,7 +12,6 @@
 
     <artifactId>btx-dts</artifactId>
     <modules>
-        <module>btx-dts-dtm</module>
     </modules>
     <groupId>top.cheesetree.btx.project</groupId>
     <packaging>pom</packaging>

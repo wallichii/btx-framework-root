@@ -18,8 +18,7 @@
     <packaging>jar</packaging>
 
     <properties>
-        <org.apereo.cas.version>4.0.4</org.apereo.cas.version>
-        <nimbus.jose.jwt.version>9.37.4</nimbus.jose.jwt.version>
+        <org.apereo.cas.version>4.1.1</org.apereo.cas.version>
     </properties>
 
     <dependencies>
@@ -38,30 +37,13 @@
             <exclusions>
                 <exclusion>
                     <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcpkix-jdk15on</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.bouncycastle</groupId>
-                    <artifactId>bcprov-jdk15on</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>com.nimbusds</groupId>
-                    <artifactId>nimbus-jose-jwt</artifactId>
+                    <artifactId>bcpkix-jdk18on</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.nimbusds</groupId>
-            <artifactId>nimbus-jose-jwt</artifactId>
-            <version>${nimbus.jose.jwt.version}</version>
-        </dependency>
-        <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk18on</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.bouncycastle</groupId>
-            <artifactId>bcprov-jdk18on</artifactId>
         </dependency>
         <dependency>
             <groupId>org.apache.shiro</groupId>

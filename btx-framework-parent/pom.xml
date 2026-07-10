@@ -19,35 +19,28 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!--spring framewwork-->
-        <spring-boot.version>3.5.13</spring-boot.version>
-        <spring.version>6.2.11</spring.version>
+        <spring-boot.version>4.1.0</spring-boot.version>
         <!--spring framewwork-->
 
-        <lombok.version>1.18.44</lombok.version>
+        <lombok.version>1.18.46</lombok.version>
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
         <com.alibaba.fastjson2.version>2.0.61</com.alibaba.fastjson2.version>
         <mybatis-plus-boot.version>3.5.16</mybatis-plus-boot.version>
-        <cn.hutool.version>5.8.44</cn.hutool.version>
-        <org.apache.shiro.version>2.1.0</org.apache.shiro.version>
-        <okhttp.version>5.2.3</okhttp.version>
-        <org.yaml.snakeyaml.version>2.4</org.yaml.snakeyaml.version>
-        <tomcat.embed.version>10.1.53</tomcat.embed.version>
+        <cn.hutool.version>5.8.46</cn.hutool.version>
+        <org.apache.shiro.version>2.2.1</org.apache.shiro.version>
+        <okhttp.version>5.4.0</okhttp.version>
+        <org.yaml.snakeyaml.version>2.6</org.yaml.snakeyaml.version>
+        <tomcat.embed.version>11.0.23</tomcat.embed.version>
         <logback.version>1.5.32</logback.version>
-        <netty.version>4.1.132.Final</netty.version>
-        <bcprov.jdk18on.version>1.81</bcprov.jdk18on.version>
+        <netty.version>4.2.15.Final</netty.version>
+        <bcprov.jdk18on.version>1.84</bcprov.jdk18on.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <io.r2dbc.version>1.1.1</io.r2dbc.version>
-        <log4j.version>2.25.4</log4j.version>
+        <log4j.version>2.26.0</log4j.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-<!--            <dependency>-->
-<!--                <groupId>org.springframework</groupId>-->
-<!--                <artifactId>spring-framework-bom</artifactId>-->
-<!--                <version>${spring.version}</version>-->
-<!--                <type>pom</type>-->
-<!--                <scope>import</scope>-->
-<!--            </dependency>-->
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
@@ -77,6 +70,7 @@
                 <artifactId>fastjson2-extension-spring6</artifactId>
                 <version>${com.alibaba.fastjson2.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-bom</artifactId>
@@ -228,4 +222,28 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>${maven-compiler-plugin.version}</version>
+                    <configuration>
+                        <source>21</source>
+                        <target>21</target>
+                        <annotationProcessorPaths>
+                            <path>
+                                <groupId>org.projectlombok</groupId>
+                                <artifactId>lombok</artifactId>
+                                <version>${lombok.version}</version>
+                            </path>
+                        </annotationProcessorPaths>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+
 </project>

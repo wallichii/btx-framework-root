@@ -2,14 +2,12 @@ package top.cheesetree.btx.framework.cache.redis;
 
 import com.alibaba.fastjson2.JSONFactory;
 import com.alibaba.fastjson2.PropertyNamingStrategy;
-import com.alibaba.fastjson2.support.spring6.data.redis.GenericFastJsonRedisSerializer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.cache.CacheProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.cache.CacheManager;
-import org.springframework.cache.annotation.CachingConfigurerSupport;
+import org.springframework.cache.annotation.CachingConfigurer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,13 +28,11 @@ import java.util.Map;
 @ConditionalOnProperty(name = "spring.cache.type", havingValue = "redis")
 @EnableCaching(proxyTargetClass = true)
 @Configuration
-@EnableConfigurationProperties({BtxRedisCacheProperties.class, CacheProperties.class})
+@EnableConfigurationProperties({BtxRedisCacheProperties.class})
 @Slf4j
-public class BtxRedisCacheConfigure extends CachingConfigurerSupport {
+public class BtxRedisCacheConfigure implements CachingConfigurer {
     @Autowired
     RedisConnectionFactory redisConnectionFactory;
-    @Autowired
-    private CacheProperties cacheProperties;
     @Autowired
     private BtxRedisConfigProperties btxRedisConfigProperties;
     @Autowired
@@ -47,13 +43,11 @@ public class BtxRedisCacheConfigure extends CachingConfigurerSupport {
     public CacheManager cacheManager() {
         BtxRedisConfigProperties defaultBtxCacheConfig = btxRedisConfigProperties;
 
-        defaultBtxCacheConfig.setDefaultValues(cacheProperties.getRedis());
-
         RedisCacheConfiguration defaultCacheConfig =
                 BtxRedisCacheManager.createRedisCacheConfiguration(defaultBtxCacheConfig);
 
         defaultCacheConfig =
-                defaultCacheConfig.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericFastJsonRedisSerializer()));
+                defaultCacheConfig.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new BtxFastJsonRedisSerializer<>()));
 
         Map<String, RedisCacheConfiguration> initialCacheConfiguration =
                 new HashMap<>(btxRedisCacheProperties.getCaches().size());
@@ -62,7 +56,7 @@ public class BtxRedisCacheConfigure extends CachingConfigurerSupport {
             btxCacheConfig.setDefaultValues(defaultBtxCacheConfig);
             RedisCacheConfiguration cacheConfig =
                     BtxRedisCacheManager.createRedisCacheConfiguration(btxCacheConfig);
-            cacheConfig.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new GenericFastJsonRedisSerializer()));
+            cacheConfig = cacheConfig.serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(new BtxFastJsonRedisSerializer<>()));
             initialCacheConfiguration.put(cacheName, cacheConfig);
         }
 
