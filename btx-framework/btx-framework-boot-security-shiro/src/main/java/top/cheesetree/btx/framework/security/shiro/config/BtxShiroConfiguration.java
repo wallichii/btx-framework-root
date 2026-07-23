@@ -38,6 +38,9 @@ import top.cheesetree.btx.framework.security.shiro.subject.StatelessDefaultSubje
 import top.cheesetree.btx.framework.security.shiro.support.cas.BtxSecurityCasAuthorizingRealm;
 import top.cheesetree.btx.framework.security.shiro.support.cas.BtxSecurityShiroCasFilter;
 import top.cheesetree.btx.framework.security.shiro.support.cas.BtxShiroCasProperties;
+import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxSecurityJwtAuthorizingRealm;
+import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxSecurityShiroJwtFilter;
+import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxShiroJwtProperties;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -50,7 +53,7 @@ import java.util.*;
  */
 @Configuration
 @EnableConfigurationProperties({BtxShiroProperties.class, BtxShiroCacheProperties.class, BtxShiroCasProperties.class,
-        BtxShiroCorsProperties.class, BtxShiroCsrfProperties.class})
+        BtxShiroCorsProperties.class, BtxShiroCsrfProperties.class, BtxShiroJwtProperties.class})
 @Slf4j
 public class BtxShiroConfiguration {
     @Autowired
@@ -148,6 +151,9 @@ public class BtxShiroConfiguration {
                         btxSecurityProperties.getErrorPath()));
                 break;
             case JWT:
+                filterMap.put("authc", new BtxSecurityShiroJwtFilter(btxShiroProperties.getTokenKey(),
+                        btxShiroProperties.isIgnoreToken(),
+                        btxSecurityProperties.getErrorPath()));
                 break;
             case CAS:
                 filterMap.put("authc", new BtxSecurityShiroCasFilter(btxShiroCasProperties.getServerLoginUrl(),
@@ -212,6 +218,10 @@ public class BtxShiroConfiguration {
             rs.add(btxSecurityCasAuthorizingRealm());
         }
 
+        if (BtxSecurityEnum.AuthType.JWT.equals(btxShiroProperties.getAuthType())) {
+            rs.add(btxSecurityJwtAuthorizingRealm());
+        }
+
         securityManager.setAuthenticator(authenticator());
         securityManager.setRealms(rs);
 
@@ -245,7 +255,7 @@ public class BtxShiroConfiguration {
             r.setAuthorizationCachingEnabled(true);
             r.setAuthenticationCacheName(btxShiroCacheProperties.getAuthenticationCacheName());
             r.setAuthorizationCacheName(btxShiroCacheProperties.getAuthorizationCacheName());
-        }else{
+        } else {
             r.setAuthenticationCachingEnabled(false);
             r.setAuthorizationCachingEnabled(false);
         }
@@ -259,6 +269,23 @@ public class BtxShiroConfiguration {
         BtxSecurityCasAuthorizingRealm r = new BtxSecurityCasAuthorizingRealm(new BtxNoAuthCredentialsMatcher(),
                 btxShiroCasProperties.getServerUrlPrefix(), btxShiroCasProperties.getValidationType(),
                 btxShiroCasProperties.getClientHostUrl());
+        if (btxShiroCacheProperties.isEnabled()) {
+            r.setAuthenticationCachingEnabled(true);
+            r.setAuthorizationCachingEnabled(true);
+            r.setAuthenticationCacheName(btxShiroCacheProperties.getAuthenticationCacheName());
+            r.setAuthorizationCacheName(btxShiroCacheProperties.getAuthorizationCacheName());
+        } else {
+            r.setAuthenticationCachingEnabled(false);
+            r.setAuthorizationCachingEnabled(false);
+        }
+
+        return r;
+    }
+
+    @ConditionalOnProperty(value = "btx.security.shiro.auth-type", havingValue = "JWT")
+    @Bean
+    public BtxSecurityJwtAuthorizingRealm btxSecurityJwtAuthorizingRealm() {
+        BtxSecurityJwtAuthorizingRealm r = new BtxSecurityJwtAuthorizingRealm(new BtxNoAuthCredentialsMatcher());
         if (btxShiroCacheProperties.isEnabled()) {
             r.setAuthenticationCachingEnabled(true);
             r.setAuthorizationCachingEnabled(true);

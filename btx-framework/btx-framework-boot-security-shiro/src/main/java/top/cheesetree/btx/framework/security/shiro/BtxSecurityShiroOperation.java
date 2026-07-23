@@ -24,6 +24,7 @@ import top.cheesetree.btx.framework.security.shiro.model.BtxShiroSecurityAuthUse
 import top.cheesetree.btx.framework.security.shiro.realm.BtxSecurityAuthorizingRealm;
 import top.cheesetree.btx.framework.security.shiro.subject.StatelessToken;
 import top.cheesetree.btx.framework.security.shiro.support.cas.CasToken;
+import top.cheesetree.btx.framework.security.shiro.support.jwt.JwtToken;
 
 /**
  * @Author: van
@@ -51,6 +52,11 @@ public class BtxSecurityShiroOperation implements IBtxSecurityOperation {
 
         switch (authtype) {
             case JWT:
+                if (args.length > 1) {
+                    t = new JwtToken(args[0], args[1]);
+                } else {
+
+                }
                 break;
             case CAS:
                 if (args.length > 0) {

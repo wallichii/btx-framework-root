@@ -28,13 +28,13 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>com.tongweb.springboot</groupId>
-            <artifactId>tongweb-spring-boot-starter-2.x</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.tongweb</groupId>
-            <artifactId>tongweb-embed-core</artifactId>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.tongweb.springboot</groupId>-->
+<!--            <artifactId>tongweb-spring-boot-starter-2.x</artifactId>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.tongweb</groupId>-->
+<!--            <artifactId>tongweb-embed-core</artifactId>-->
+<!--        </dependency>-->
     </dependencies>
 </project>
