@@ -141,6 +141,8 @@ public class BtxSecurityShiroOperation implements IBtxSecurityOperation {
             case CAS:
                 break;
             case JWT:
+                tk = new JwtToken(((AuthTokenInfo) au.getAuthinfo()).getAccessToken());
+                break;
             case EXT_TOKEN:
             case TOKEN:
             case SESSION:

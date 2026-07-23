@@ -216,9 +216,7 @@ public class BtxShiroConfiguration {
         rs.add(btxSecurityAuthorizingRealm());
         if (BtxSecurityEnum.AuthType.CAS.equals(btxShiroProperties.getAuthType())) {
             rs.add(btxSecurityCasAuthorizingRealm());
-        }
-
-        if (BtxSecurityEnum.AuthType.JWT.equals(btxShiroProperties.getAuthType())) {
+        }else if (BtxSecurityEnum.AuthType.JWT.equals(btxShiroProperties.getAuthType())) {
             rs.add(btxSecurityJwtAuthorizingRealm());
         }
 
