@@ -143,6 +143,8 @@ public class BtxSecurityShiroOperation<T extends BtxShiroSecurityUserDTO, A exte
             case CAS:
                 break;
             case JWT:
+                tk = new JwtToken(((AuthTokenInfo) au.getAuthinfo()).getAccessToken());
+                break;
             case EXT_TOKEN:
             case TOKEN:
             case SESSION:

@@ -1,8 +1,10 @@
 package top.cheesetree.btx.framework.security.shiro.support.jwt;
 
 
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.jwt.JWT;
 import cn.hutool.jwt.JWTException;
+import cn.hutool.jwt.JWTPayload;
 import com.alibaba.fastjson2.JSON;
 import com.alibaba.fastjson2.JSONWriter;
 import jakarta.servlet.ServletRequest;
@@ -51,8 +53,7 @@ public class BtxSecurityShiroJwtFilter extends AuthenticatingFilter {
             String token = getToken((HttpServletRequest) request);
             if (token != null) {
                 try {
-                    JWT jwt = JWT.of(token);
-                    return jwt.validate(System.currentTimeMillis()) && executeLogin(request, response);
+                    return JWT.of(token).getPayload().getClaimsJson().getDate(JWTPayload.EXPIRES_AT).after(DateUtil.date())  && executeLogin(request, response);
                 } catch (JWTException e) {
                     log.error("jwt valid error:{}", token, e);
                 }
