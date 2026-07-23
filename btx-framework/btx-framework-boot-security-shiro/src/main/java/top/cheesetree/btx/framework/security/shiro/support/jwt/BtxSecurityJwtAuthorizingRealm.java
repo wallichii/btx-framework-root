@@ -162,7 +162,6 @@ public class BtxSecurityJwtAuthorizingRealm extends AuthorizingRealm {
 
                 JWT jwt = new JWT();
                 jwt.setHeader("alg", btxShiroJwtProperties.getAlgorithmName().toString());
-                jwt.setHeader("type", "jwt");
 
                 jwt.setSigner(btxShiroJwtProperties.getAlgorithmName().toString(),
                         btxShiroJwtProperties.getSecretKey().getBytes(StandardCharsets.UTF_8));
