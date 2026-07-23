@@ -40,6 +40,7 @@ import top.cheesetree.btx.framework.security.shiro.support.cas.BtxSecurityShiroC
 import top.cheesetree.btx.framework.security.shiro.support.cas.BtxShiroCasProperties;
 import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxSecurityJwtAuthorizingRealm;
 import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxSecurityShiroJwtFilter;
+import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxShiroJwtProperties;
 
 import javax.servlet.DispatcherType;
 import javax.servlet.Filter;
@@ -52,7 +53,7 @@ import java.util.*;
  */
 @Configuration
 @EnableConfigurationProperties({BtxShiroProperties.class, BtxShiroCacheProperties.class, BtxShiroCasProperties.class,
-        BtxShiroCorsProperties.class, BtxShiroCsrfProperties.class})
+        BtxShiroCorsProperties.class, BtxShiroCsrfProperties.class, BtxShiroJwtProperties.class})
 @Slf4j
 public class BtxShiroConfiguration {
     @Autowired
@@ -253,7 +254,7 @@ public class BtxShiroConfiguration {
             r.setAuthorizationCachingEnabled(true);
             r.setAuthenticationCacheName(btxShiroCacheProperties.getAuthenticationCacheName());
             r.setAuthorizationCacheName(btxShiroCacheProperties.getAuthorizationCacheName());
-        }else{
+        } else {
             r.setAuthenticationCachingEnabled(false);
             r.setAuthorizationCachingEnabled(false);
         }
