@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!--spring framewwork-->
-        <spring-boot.version>3.5.13</spring-boot.version>
+        <spring-boot.version>3.5.16</spring-boot.version>
         <spring.version>6.2.11</spring.version>
         <!--spring framewwork-->
 
@@ -30,10 +30,10 @@
         <org.apache.shiro.version>2.1.0</org.apache.shiro.version>
         <okhttp.version>5.2.3</okhttp.version>
         <org.yaml.snakeyaml.version>2.4</org.yaml.snakeyaml.version>
-        <tomcat.embed.version>10.1.53</tomcat.embed.version>
+        <tomcat.embed.version>10.1.57</tomcat.embed.version>
         <logback.version>1.5.32</logback.version>
         <netty.version>4.1.132.Final</netty.version>
-        <bcprov.jdk18on.version>1.81</bcprov.jdk18on.version>
+        <bcprov.jdk18on.version>1.84</bcprov.jdk18on.version>
         <commons-beanutils.version>1.11.0</commons-beanutils.version>
         <io.r2dbc.version>1.1.1</io.r2dbc.version>
         <log4j.version>2.25.4</log4j.version>

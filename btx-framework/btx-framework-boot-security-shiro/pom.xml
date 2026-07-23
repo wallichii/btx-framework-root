@@ -89,6 +89,10 @@
             <artifactId>shiro-spring</artifactId>
             <classifier>jakarta</classifier>
         </dependency>
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-jwt</artifactId>
+        </dependency>
     </dependencies>
 
 </project>
