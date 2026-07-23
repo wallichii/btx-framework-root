@@ -23,19 +23,19 @@
         <spring-boot.version>2.7.18</spring-boot.version>
         <!--spring framewwork-->
 
-        <lombok.version>1.18.38</lombok.version>
+        <lombok.version>1.18.44</lombok.version>
         <com.alibaba.fastjson2.version>2.0.56</com.alibaba.fastjson2.version>
         <mybatis-plus-boot.version>3.5.10.1</mybatis-plus-boot.version>
-        <cn.hutool.version>5.8.36</cn.hutool.version>
+        <cn.hutool.version>5.8.44</cn.hutool.version>
         <org.apache.shiro.version>1.13.0</org.apache.shiro.version>
         <org.jasig.cas.client.version>3.6.4</org.jasig.cas.client.version>
         <com.fasterxml.jackson.version>2.15.4</com.fasterxml.jackson.version>
         <okhttp.version>4.12.0</okhttp.version>
         <org.yaml.snakeyaml.version>1.33</org.yaml.snakeyaml.version>
-        <tomcat.embed.version>9.0.113</tomcat.embed.version>
+        <tomcat.embed.version>9.0.120</tomcat.embed.version>
         <logback.version>1.2.13</logback.version>
         <io.netty.version>4.1.129.Final</io.netty.version>
-        <bcprov.jdk18on.version>1.79</bcprov.jdk18on.version>
+        <bcprov.jdk18on.version>1.84</bcprov.jdk18on.version>
         <spring.version>5.3.39</spring.version>
     </properties>
 

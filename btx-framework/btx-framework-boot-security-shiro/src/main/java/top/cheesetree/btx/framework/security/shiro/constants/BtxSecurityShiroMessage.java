@@ -1,6 +1,5 @@
 package top.cheesetree.btx.framework.security.shiro.constants;
 
-import top.cheesetree.btx.framework.core.constants.BtxMessage;
 import top.cheesetree.btx.framework.security.constants.BtxSecurityMessage;
 
 /**
@@ -16,4 +15,9 @@ public class BtxSecurityShiroMessage extends BtxSecurityMessage {
     public static final BtxSecurityShiroMessage SECURIT_RUNAS_ERROR = new BtxSecurityShiroMessage(21000,
             "身份切换必须是BtxShiroSecurityUserDTO类型");
 
+    public static final BtxSecurityShiroMessage SECURIT_JWT_UNEXIST_ERROR = new BtxSecurityShiroMessage(21001,
+            "JWT信息不存在");
+
+    public static final BtxSecurityShiroMessage SECURIT_JWT_ERROR = new BtxSecurityShiroMessage(21001,
+            "非法JWT信息");
 }
