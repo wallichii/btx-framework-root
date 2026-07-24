@@ -182,6 +182,6 @@ public class BtxSecurityJwtAuthorizingRealm extends AuthorizingRealm {
 
     @Override
     protected Object getAuthenticationCacheKey(AuthenticationToken token) {
-        return super.getAuthenticationCacheKey(token);
+        return token != null ? ((JwtToken) token).getJwt() : null;
     }
 }
