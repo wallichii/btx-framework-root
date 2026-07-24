@@ -170,6 +170,7 @@ public class BtxSecurityJwtAuthorizingRealm extends AuthorizingRealm {
                 jwt.setIssuedAt(new Date());
                 t.setAccessToken(jwt.sign());
 
+                ((JwtToken) token).setJwt(t.getAccessToken());
                 u.setAuthinfo(t);
                 return new SimpleAuthenticationInfo(new SimplePrincipalCollection(u, "user"), t.getAccessToken());
             } else {
