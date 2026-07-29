@@ -18,6 +18,7 @@ import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
+import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -25,8 +26,14 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
+import org.springframework.web.method.HandlerMethod;
+import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
+import top.cheesetree.btx.framework.boot.spring.ApplicationBeanFactory;
 import top.cheesetree.btx.framework.security.IBtxSecurityPermissionService;
+import top.cheesetree.btx.framework.security.annotation.NoLogin;
 import top.cheesetree.btx.framework.security.config.BtxSecurityProperties;
 import top.cheesetree.btx.framework.security.constants.BtxSecurityEnum;
 import top.cheesetree.btx.framework.security.model.SecurityFuncDTO;
@@ -44,10 +51,7 @@ import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxSecurityJwtAut
 import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxSecurityShiroJwtFilter;
 import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxShiroJwtProperties;
 
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @Author: van
@@ -58,7 +62,7 @@ import java.util.Map;
 @EnableConfigurationProperties({BtxShiroProperties.class, BtxShiroCacheProperties.class, BtxShiroCasProperties.class,
         BtxShiroCorsProperties.class, BtxShiroCsrfProperties.class, BtxShiroJwtProperties.class})
 @Slf4j
-public class BtxShiroConfiguration {
+public class BtxShiroConfiguration implements SmartInitializingSingleton {
     @Autowired
     @Lazy
     BtxSecurityProperties btxSecurityProperties;
@@ -323,4 +327,29 @@ public class BtxShiroConfiguration {
     }
 
 
+    @Override
+    public void afterSingletonsInstantiated() {
+        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
+
+        //扫描免登注解
+        RequestMappingHandlerMapping handlerMapping =
+                ApplicationBeanFactory.getApplicationContext().getBean(RequestMappingHandlerMapping.class);
+        Map<RequestMappingInfo, HandlerMethod> handlerMap = handlerMapping.getHandlerMethods();
+
+        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMap.entrySet()) {
+            Set<String> pathPatterns = entry.getKey().getPatternValues();
+            HandlerMethod handlerMethod = entry.getValue();
+
+            NoLogin methodAnno = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), NoLogin.class);
+            NoLogin classAnno = AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), NoLogin.class);
+
+            if (methodAnno != null || classAnno != null) {
+                pathPatterns.forEach(pathPattern -> {
+                    filterChainDefinitionMap.put(pathPattern, "anon");
+                });
+            }
+        }
+
+        ApplicationBeanFactory.getBean(ShiroFilterFactoryBean.class).getFilterChainDefinitionMap().putAll(filterChainDefinitionMap);
+    }
 }
