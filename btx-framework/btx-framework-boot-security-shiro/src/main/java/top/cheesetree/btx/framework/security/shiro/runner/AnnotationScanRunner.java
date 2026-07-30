@@ -5,9 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.core.annotation.Order;
-import org.springframework.core.io.DefaultResourceLoader;
-import org.springframework.core.type.classreading.CachingMetadataReaderFactory;
-import org.springframework.core.type.classreading.MetadataReaderFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 import org.springframework.web.method.HandlerMethod;
@@ -35,13 +32,6 @@ public class AnnotationScanRunner implements ApplicationRunner {
     private static final Set<String> ANONYMOUS_PATH_SET = ConcurrentHashMap.newKeySet();
 
     private static final AntPathMatcher SPRING_ANT_MATCHER = new AntPathMatcher();
-
-    // 修改为你项目Controller根包，多个包用逗号分隔
-    private static final String BASE_SCAN_PACKAGES = "top.cheesetree.btx";
-
-    private final MetadataReaderFactory metadataReaderFactory =
-            new CachingMetadataReaderFactory(new DefaultResourceLoader());
-
     @Override
     public void run(ApplicationArguments args) {
         Map<RequestMappingInfo, HandlerMethod> handlerMethodMap = requestMappingHandlerMapping.getHandlerMethods();
