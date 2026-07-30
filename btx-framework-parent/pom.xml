@@ -24,7 +24,8 @@
 
         <lombok.version>1.18.46</lombok.version>
         <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
-        <com.alibaba.fastjson2.version>2.0.61</com.alibaba.fastjson2.version>
+        <com.alibaba.fastjson2.version>2.0.63</com.alibaba.fastjson2.version>
+        <com.alibaba.fastjson2.spring6.version>2.0.61</com.alibaba.fastjson2.spring6.version>
         <mybatis-plus-boot.version>3.5.17</mybatis-plus-boot.version>
         <cn.hutool.version>5.8.47</cn.hutool.version>
         <org.apache.shiro.version>2.2.1</org.apache.shiro.version>
@@ -68,7 +69,7 @@
             <dependency>
                 <groupId>com.alibaba.fastjson2</groupId>
                 <artifactId>fastjson2-extension-spring6</artifactId>
-                <version>${com.alibaba.fastjson2.version}</version>
+                <version>${com.alibaba.fastjson2.spring6.version}</version>
             </dependency>
 
             <dependency>

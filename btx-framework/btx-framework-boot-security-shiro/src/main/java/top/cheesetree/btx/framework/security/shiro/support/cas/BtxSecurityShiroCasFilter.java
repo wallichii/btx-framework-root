@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.URLEncoder;
 
+import static top.cheesetree.btx.framework.security.shiro.constants.BtxSecurityShiroConst.SKIP_SHIRO_AUTH;
+
 /**
  * @author van
  * @date 2022/2/21 10:14
@@ -46,6 +48,18 @@ public class BtxSecurityShiroCasFilter extends AuthenticatingFilter {
     @Override
     protected AuthenticationToken createToken(ServletRequest request, ServletResponse servletResponse) {
         return new CasToken(getTicket((HttpServletRequest) request), null);
+    }
+
+    @Override
+    protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        // 读取前置过滤器写入的免登标记
+        Object skipFlag = request.getAttribute(SKIP_SHIRO_AUTH);
+        if (Boolean.TRUE.equals(skipFlag)) {
+            log.debug("[SkipAuthc] 识别免登标记，跳过登录校验");
+            return true;
+        }
+        // 执行原生登录认证逻辑
+        return super.isAccessAllowed(request, response, mappedValue);
     }
 
     @Override
