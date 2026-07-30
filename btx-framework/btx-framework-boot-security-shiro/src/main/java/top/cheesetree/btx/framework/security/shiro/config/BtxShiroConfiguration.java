@@ -99,6 +99,7 @@ public class BtxShiroConfiguration {
 
         //设置过滤器
         Map<String, Filter> filterMap = shiroFilterFactoryBean.getFilters();
+        List<String> anonPatterns = new ArrayList<>();
 
         filterMap.put("user", new BtxSecurityShiroUserFilter());
         filterMap.put("perms", new BtxSecurityShiroPermissionsFilter());
@@ -107,28 +108,26 @@ public class BtxShiroConfiguration {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         if (btxSecurityProperties.getContextInterceptorExcludePathPatterns() != null) {
             //匿名访问
-            Arrays.stream(btxSecurityProperties.getContextInterceptorExcludePathPatterns()).forEach((String extpath) -> {
-                filterChainDefinitionMap.put(extpath, "anon");
-            });
+            anonPatterns.addAll(Arrays.asList(btxSecurityProperties.getContextInterceptorExcludePathPatterns()));
         }
 
         //设置登录页面
         if (StringUtils.hasLength(btxSecurityProperties.getLoginPath())) {
             shiroFilterFactoryBean.setLoginUrl(btxSecurityProperties.getLoginPath());
-            filterChainDefinitionMap.put(btxSecurityProperties.getLoginPath(), "anon");
+            anonPatterns.add(btxSecurityProperties.getLoginPath());
         }
         //设置未授权页面
         if (StringUtils.hasLength(btxSecurityProperties.getNoAuthPath())) {
             shiroFilterFactoryBean.setUnauthorizedUrl(btxSecurityProperties.getNoAuthPath());
-            filterChainDefinitionMap.put(btxSecurityProperties.getNoAuthPath(), "anon");
+            anonPatterns.add(btxSecurityProperties.getNoAuthPath());
         }
         //设置错误页面
         if (StringUtils.hasLength(btxSecurityProperties.getErrorPath())) {
-            filterChainDefinitionMap.put(btxSecurityProperties.getErrorPath(), "anon");
+            anonPatterns.add(btxSecurityProperties.getErrorPath());
         }
 
         if (StringUtils.hasLength(btxSecurityProperties.getExpirePath())) {
-            filterChainDefinitionMap.put(btxSecurityProperties.getExpirePath(), "anon");
+            anonPatterns.add(btxSecurityProperties.getExpirePath());
         }
 
         //配置权限自动映射
@@ -164,7 +163,9 @@ public class BtxShiroConfiguration {
             default:
                 break;
         }
-        filterChainDefinitionMap.put("/**", "authc");
+
+        filterMap.put("anon", new BtxSecurityShiroAnonymousFilter(anonPatterns));
+        filterChainDefinitionMap.put("/**", "anon,authc");
 
         shiroFilterFactoryBean.setFilters(filterMap);
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);

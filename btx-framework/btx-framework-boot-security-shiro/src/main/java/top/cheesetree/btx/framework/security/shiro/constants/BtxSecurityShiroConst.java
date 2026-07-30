@@ -22,4 +22,6 @@ public interface BtxSecurityShiroConst extends BtxSecurityConst {
     String ACCESS_CONTROL_ALLOW_HEADERS = "Access-Control-Allow-Headers";
 
     String ACCESS_CONTROL_REQUEST_HEADERS = "access-control-request-headers";
+
+    String SKIP_SHIRO_AUTH = "SKIP_SHIRO_AUTH";
 }

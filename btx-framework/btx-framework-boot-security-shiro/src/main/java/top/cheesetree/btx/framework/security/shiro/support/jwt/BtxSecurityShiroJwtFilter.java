@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 
 import static top.cheesetree.btx.framework.security.constants.BtxSecurityMessage.SECURIT_UNLOGIN_ERROR;
+import static top.cheesetree.btx.framework.security.shiro.constants.BtxSecurityShiroConst.SKIP_SHIRO_AUTH;
 
 /**
  * @author van
@@ -47,6 +48,12 @@ public class BtxSecurityShiroJwtFilter extends AuthenticatingFilter {
     @SneakyThrows
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        Object skipFlag = request.getAttribute(SKIP_SHIRO_AUTH);
+        if (Boolean.TRUE.equals(skipFlag)) {
+            log.debug("[SkipAuthc] 识别免登标记，跳过登录校验");
+            return true;
+        }
+
         if (ignoreToken) {
             return super.executeLogin(request, response);
         } else {
