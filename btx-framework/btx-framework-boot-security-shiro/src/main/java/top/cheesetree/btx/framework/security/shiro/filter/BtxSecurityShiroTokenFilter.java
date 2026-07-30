@@ -8,6 +8,7 @@ import jakarta.servlet.ServletResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.web.filter.authc.AuthenticatingFilter;
 import org.apache.shiro.web.util.WebUtils;
@@ -22,12 +23,14 @@ import java.io.OutputStream;
 import java.net.URLEncoder;
 
 import static top.cheesetree.btx.framework.security.constants.BtxSecurityMessage.SECURIT_UNLOGIN_ERROR;
+import static top.cheesetree.btx.framework.security.shiro.constants.BtxSecurityShiroConst.SKIP_SHIRO_AUTH;
 
 /**
  * @author van
  * @date 2022/2/17 15:09
  * @description TODO
  */
+@Slf4j
 public class BtxSecurityShiroTokenFilter extends AuthenticatingFilter {
     private String tokenKey;
 
@@ -49,6 +52,13 @@ public class BtxSecurityShiroTokenFilter extends AuthenticatingFilter {
     @SneakyThrows
     @Override
     protected boolean isAccessAllowed(ServletRequest request, ServletResponse response, Object mappedValue) {
+        // 读取前置过滤器写入的免登标记
+        Object skipFlag = request.getAttribute(SKIP_SHIRO_AUTH);
+        if (Boolean.TRUE.equals(skipFlag)) {
+            log.debug("[SkipAuthc] 识别免登标记，跳过登录校验");
+            return true;
+        }
+
         return (ignoreToken || StringUtils.hasLength(getToken((HttpServletRequest) request))) && super.executeLogin(request, response);
     }
 

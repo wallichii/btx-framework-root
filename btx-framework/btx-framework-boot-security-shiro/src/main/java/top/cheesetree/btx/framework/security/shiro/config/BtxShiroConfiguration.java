@@ -18,7 +18,6 @@ import org.apache.shiro.web.mgt.DefaultWebSubjectFactory;
 import org.apache.shiro.web.servlet.SimpleCookie;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
-import org.springframework.beans.factory.SmartInitializingSingleton;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -26,14 +25,8 @@ import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.util.StringUtils;
-import org.springframework.web.method.HandlerMethod;
-import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
-import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
-import top.cheesetree.btx.framework.boot.spring.ApplicationBeanFactory;
 import top.cheesetree.btx.framework.security.IBtxSecurityPermissionService;
-import top.cheesetree.btx.framework.security.annotation.NoLogin;
 import top.cheesetree.btx.framework.security.config.BtxSecurityProperties;
 import top.cheesetree.btx.framework.security.constants.BtxSecurityEnum;
 import top.cheesetree.btx.framework.security.model.SecurityFuncDTO;
@@ -51,7 +44,10 @@ import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxSecurityJwtAut
 import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxSecurityShiroJwtFilter;
 import top.cheesetree.btx.framework.security.shiro.support.jwt.BtxShiroJwtProperties;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * @Author: van
@@ -62,7 +58,7 @@ import java.util.*;
 @EnableConfigurationProperties({BtxShiroProperties.class, BtxShiroCacheProperties.class, BtxShiroCasProperties.class,
         BtxShiroCorsProperties.class, BtxShiroCsrfProperties.class, BtxShiroJwtProperties.class})
 @Slf4j
-public class BtxShiroConfiguration implements SmartInitializingSingleton {
+public class BtxShiroConfiguration {
     @Autowired
     @Lazy
     BtxSecurityProperties btxSecurityProperties;
@@ -103,9 +99,9 @@ public class BtxShiroConfiguration implements SmartInitializingSingleton {
         ShiroFilterFactoryBean shiroFilterFactoryBean = new ShiroFilterFactoryBean();
         // 必须设置 SecurityManager
         shiroFilterFactoryBean.setSecurityManager(securityManager);
-
         //设置过滤器
         Map<String, Filter> filterMap = shiroFilterFactoryBean.getFilters();
+        List<String> anonPatterns = new ArrayList<>();
 
         filterMap.put("user", new BtxSecurityShiroUserFilter());
         filterMap.put("perms", new BtxSecurityShiroPermissionsFilter());
@@ -115,27 +111,27 @@ public class BtxShiroConfiguration implements SmartInitializingSingleton {
         if (btxSecurityProperties.getContextInterceptorExcludePathPatterns() != null) {
             //匿名访问
             btxSecurityProperties.getContextInterceptorExcludePathPatterns().forEach((String extpath) -> {
-                filterChainDefinitionMap.put(extpath, "anon");
+                anonPatterns.add(extpath);
             });
         }
 
         //设置登录页面
         if (StringUtils.hasLength(btxSecurityProperties.getLoginPath())) {
             shiroFilterFactoryBean.setLoginUrl(btxSecurityProperties.getLoginPath());
-            filterChainDefinitionMap.put(btxSecurityProperties.getLoginPath(), "anon");
+            anonPatterns.add(btxSecurityProperties.getLoginPath());
         }
         //设置未授权页面
         if (StringUtils.hasLength(btxSecurityProperties.getNoAuthPath())) {
             shiroFilterFactoryBean.setUnauthorizedUrl(btxSecurityProperties.getNoAuthPath());
-            filterChainDefinitionMap.put(btxSecurityProperties.getNoAuthPath(), "anon");
+            anonPatterns.add(btxSecurityProperties.getNoAuthPath());
         }
         //设置错误页面
         if (StringUtils.hasLength(btxSecurityProperties.getErrorPath())) {
-            filterChainDefinitionMap.put(btxSecurityProperties.getErrorPath(), "anon");
+            anonPatterns.add(btxSecurityProperties.getErrorPath());
         }
 
         if (StringUtils.hasLength(btxSecurityProperties.getExpirePath())) {
-            filterChainDefinitionMap.put(btxSecurityProperties.getExpirePath(), "anon");
+            anonPatterns.add(btxSecurityProperties.getExpirePath());
         }
 
         //配置权限自动映射
@@ -171,7 +167,11 @@ public class BtxShiroConfiguration implements SmartInitializingSingleton {
             default:
                 break;
         }
-        filterChainDefinitionMap.put("/**", "authc");
+
+        filterMap.put("anon", new BtxSecurityShiroAnonymousFilter(anonPatterns));
+
+
+        filterChainDefinitionMap.put("/**", "anon,authc");
 
         shiroFilterFactoryBean.setFilters(filterMap);
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
@@ -324,32 +324,5 @@ public class BtxShiroConfiguration implements SmartInitializingSingleton {
         registration.setEnabled(true);
         registration.addUrlPatterns("/*");
         return registration;
-    }
-
-
-    @Override
-    public void afterSingletonsInstantiated() {
-        Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
-
-        //扫描免登注解
-        RequestMappingHandlerMapping handlerMapping =
-                ApplicationBeanFactory.getApplicationContext().getBean(RequestMappingHandlerMapping.class);
-        Map<RequestMappingInfo, HandlerMethod> handlerMap = handlerMapping.getHandlerMethods();
-
-        for (Map.Entry<RequestMappingInfo, HandlerMethod> entry : handlerMap.entrySet()) {
-            Set<String> pathPatterns = entry.getKey().getPatternValues();
-            HandlerMethod handlerMethod = entry.getValue();
-
-            NoLogin methodAnno = AnnotationUtils.findAnnotation(handlerMethod.getMethod(), NoLogin.class);
-            NoLogin classAnno = AnnotationUtils.findAnnotation(handlerMethod.getBeanType(), NoLogin.class);
-
-            if (methodAnno != null || classAnno != null) {
-                pathPatterns.forEach(pathPattern -> {
-                    filterChainDefinitionMap.put(pathPattern, "anon");
-                });
-            }
-        }
-
-        ApplicationBeanFactory.getBean(ShiroFilterFactoryBean.class).getFilterChainDefinitionMap().putAll(filterChainDefinitionMap);
     }
 }
