@@ -110,9 +110,7 @@ public class BtxShiroConfiguration {
         Map<String, String> filterChainDefinitionMap = new LinkedHashMap<>();
         if (btxSecurityProperties.getContextInterceptorExcludePathPatterns() != null) {
             //匿名访问
-            btxSecurityProperties.getContextInterceptorExcludePathPatterns().forEach((String extpath) -> {
-                anonPatterns.add(extpath);
-            });
+            anonPatterns.addAll(btxSecurityProperties.getContextInterceptorExcludePathPatterns());
         }
 
         //设置登录页面
@@ -169,7 +167,6 @@ public class BtxShiroConfiguration {
         }
 
         filterMap.put("anon", new BtxSecurityShiroAnonymousFilter(anonPatterns));
-
 
         filterChainDefinitionMap.put("/**", "anon,authc");
 
