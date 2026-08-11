@@ -6,6 +6,7 @@ import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
 import org.apache.shiro.cache.Cache;
+import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
@@ -22,6 +23,7 @@ import top.cheesetree.btx.framework.security.shiro.config.BtxShiroProperties;
 import top.cheesetree.btx.framework.security.shiro.matcher.BtxNoAuthCredentialsMatcher;
 import top.cheesetree.btx.framework.security.shiro.model.*;
 import top.cheesetree.btx.framework.security.shiro.subject.StatelessToken;
+import top.cheesetree.btx.framework.security.shiro.util.BtxSerializableByteSource;
 
 import java.util.HashSet;
 import java.util.List;
@@ -114,7 +116,9 @@ public class BtxSecurityAuthorizingRealm extends AuthorizingRealm {
             AuthTokenInfo t = new AuthTokenInfo();
             t.setAccessToken(token.getToken());
             u.setAuthinfo(t);
-            return new SimpleAuthenticationInfo(new SimplePrincipalCollection(u, "user"), t.getAccessToken());
+
+            ByteSource salt = BtxSerializableByteSource.bytes("");
+            return new SimpleAuthenticationInfo(new SimplePrincipalCollection(u, "user"), t.getAccessToken(), salt);
         } else {
             throw new AccountException(JSON.toJSONString(ret));
         }

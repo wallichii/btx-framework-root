@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
+import org.apache.shiro.lang.util.ByteSource;
 import org.apache.shiro.realm.AuthorizingRealm;
 import org.apache.shiro.subject.PrincipalCollection;
 import org.apache.shiro.subject.SimplePrincipalCollection;
@@ -21,6 +22,7 @@ import top.cheesetree.btx.framework.security.model.SecurityRoleDTO;
 import top.cheesetree.btx.framework.security.shiro.config.BtxShiroProperties;
 import top.cheesetree.btx.framework.security.shiro.matcher.BtxNoAuthCredentialsMatcher;
 import top.cheesetree.btx.framework.security.shiro.model.*;
+import top.cheesetree.btx.framework.security.shiro.util.BtxSerializableByteSource;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
@@ -172,7 +174,9 @@ public class BtxSecurityJwtAuthorizingRealm extends AuthorizingRealm {
 
                 ((JwtToken) token).setJwt(t.getAccessToken());
                 u.setAuthinfo(t);
-                return new SimpleAuthenticationInfo(new SimplePrincipalCollection(u, "user"), t.getAccessToken());
+
+                ByteSource salt = BtxSerializableByteSource.bytes("");
+                return new SimpleAuthenticationInfo(new SimplePrincipalCollection(u, "user"), t.getAccessToken(), salt);
             } else {
                 throw new AccountException(JSON.toJSONString(ret));
             }
