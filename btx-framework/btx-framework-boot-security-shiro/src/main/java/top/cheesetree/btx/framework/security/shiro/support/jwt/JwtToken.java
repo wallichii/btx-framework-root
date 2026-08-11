@@ -12,7 +12,7 @@ import org.apache.shiro.authc.UsernamePasswordToken;
 @Getter
 @Setter
 public class JwtToken extends UsernamePasswordToken {
-    private String jwt;
+    private String jwt = "";
 
     public JwtToken() {
         super();
