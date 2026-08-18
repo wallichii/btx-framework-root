@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -210,20 +209,14 @@ public class HttpUtil {
     }
 
     public static RestTemplate geRestTemplate(boolean isHttps, int timeout, boolean ndBufferBody) {
-        RestTemplate restTemplate;
-        if (isHttps) {
-            HttpsClientRequestFactory hcr = new HttpsClientRequestFactory();
-            hcr.setConnectTimeout(DEF_CON_TIMEOUT);
-            hcr.setReadTimeout(timeout);
-            hcr.setBufferRequestBody(ndBufferBody);
-            restTemplate = new RestTemplate(hcr);
-        } else {
-            SimpleClientHttpRequestFactory hrf = new SimpleClientHttpRequestFactory();
-            hrf.setConnectTimeout(DEF_CON_TIMEOUT);
-            hrf.setReadTimeout(timeout);
-            hrf.setBufferRequestBody(ndBufferBody);
-            restTemplate = new RestTemplate(hrf);
-        }
+        // HttpsClientRequestFactory 会自动识别 HTTPS：HTTPS 请求会配置信任所有证书的 SSL
+        // 上下文与放行主机名校验，HTTP 请求保持默认行为。因此无论 isHttps 为何值，统一使用
+        // 该工厂即可保证请求不受信任的 HTTPS 地址时不会报 PKIX path building failed。
+        HttpsClientRequestFactory hrf = new HttpsClientRequestFactory();
+        hrf.setConnectTimeout(DEF_CON_TIMEOUT);
+        hrf.setReadTimeout(timeout);
+        hrf.setBufferRequestBody(ndBufferBody);
+        RestTemplate restTemplate = new RestTemplate(hrf);
 
         restTemplate.getMessageConverters().forEach(httpMessageConverter -> {
             if (httpMessageConverter instanceof StringHttpMessageConverter) {
