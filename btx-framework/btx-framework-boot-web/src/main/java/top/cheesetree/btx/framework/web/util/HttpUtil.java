@@ -5,7 +5,6 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.*;
 import org.springframework.http.client.JdkClientHttpRequestFactory;
-import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.util.LinkedMultiValueMap;
@@ -16,12 +15,14 @@ import org.springframework.web.client.RestTemplate;
 import top.cheesetree.btx.framework.web.model.dto.FileInfoDTO;
 
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import java.net.http.HttpClient;
 import java.nio.charset.StandardCharsets;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -132,7 +133,7 @@ public class HttpUtil {
 
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add(filekey, fileEntity);
-        RestTemplate restTemplate = geRestTemplate(url.startsWith("https"), to);
+        RestTemplate restTemplate = getRestTemplate(url.startsWith("https"), to);
         HttpHeaders header = new HttpHeaders();
 
         for (Map.Entry<String, String> entry : headers.entrySet()) {
@@ -267,14 +268,10 @@ public class HttpUtil {
 
     private static JdkClientHttpRequestFactory getSSLFactory(int timeout) throws NoSuchAlgorithmException,
             KeyManagementException {
-
-        SSLContext sslContext = SSLContext.getInstance("TLS");
-        sslContext.init(
-                null,
-                new TrustManager[]{new X509TrustManager() { // 自定义信任管理器
+        TrustManager[] trustAllCerts = new TrustManager[]{
+                new X509TrustManager() {
                     @Override
                     public void checkClientTrusted(X509Certificate[] chain, String authType) {
-
                     }
 
                     @Override
@@ -285,34 +282,45 @@ public class HttpUtil {
                     @Override
                     public void checkServerTrusted(X509Certificate[] certs, String authType) {
                     }
-                }},
-                java.security.SecureRandom.getInstanceStrong()
-        );
+                }
+        };
 
-        JdkClientHttpRequestFactory hcr = new JdkClientHttpRequestFactory(HttpClient.newBuilder()
-                .connectTimeout(Duration.ofSeconds(timeout)) // 连接超时：5秒
-                .sslContext(sslContext) // 关联自定义 SSL 上下文（可选）
-                .build());
-        hcr.setReadTimeout(Duration.ofSeconds(timeout));
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, trustAllCerts, new SecureRandom());
 
-        return hcr;
+        // 关闭主机名校验，否则自签名证书报PKIX异常
+        SSLParameters sslParameters = sslContext.getDefaultSSLParameters();
+        sslParameters.setEndpointIdentificationAlgorithm(null);
+
+        HttpClient httpClient = HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(timeout))
+                .sslContext(sslContext)
+                .sslParameters(sslParameters)
+                .build();
+
+        JdkClientHttpRequestFactory factory = new JdkClientHttpRequestFactory(httpClient);
+        factory.setReadTimeout(Duration.ofSeconds(timeout));
+        return factory;
     }
 
-    public static RestTemplate geRestTemplate(boolean isHttps, int timeout) {
-        RestTemplate restTemplate;
+    public static RestTemplate getRestTemplate(boolean isHttps, int timeout) {
+        JdkClientHttpRequestFactory requestFactory;
         if (isHttps) {
             try {
-                restTemplate = new RestTemplate(getSSLFactory(timeout));
+                requestFactory = getSSLFactory(timeout);
             } catch (KeyManagementException | NoSuchAlgorithmException e) {
-                throw new RuntimeException(e);
+                throw new RuntimeException("创建HTTPS RestTemplate失败", e);
             }
         } else {
-            SimpleClientHttpRequestFactory hrf = new SimpleClientHttpRequestFactory();
-            hrf.setConnectTimeout(DEF_CON_TIMEOUT);
-            hrf.setReadTimeout(timeout);
-            restTemplate = new RestTemplate(hrf);
+            HttpClient httpClient = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofSeconds(timeout))
+                    .build();
+            requestFactory = new JdkClientHttpRequestFactory(httpClient);
+            // setReadTimeout接收Duration
+            requestFactory.setReadTimeout(Duration.ofSeconds(timeout));
         }
 
+        RestTemplate restTemplate = new RestTemplate(requestFactory);
         restTemplate.getMessageConverters().forEach(httpMessageConverter -> {
             if (httpMessageConverter instanceof StringHttpMessageConverter) {
                 ((StringHttpMessageConverter) httpMessageConverter).setDefaultCharset(StandardCharsets.UTF_8);
