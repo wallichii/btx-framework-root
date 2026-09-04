@@ -25,7 +25,7 @@ public abstract class SecurityGroupDTO implements ValueObject {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof SecurityGroupDTO) {
+        if (obj instanceof SecurityGroupDTO) {
             SecurityGroupDTO gt = (SecurityGroupDTO) obj;
             if (ExceptionCodeUtil.isNotBlank(this.groupId)) {
                 return this.groupId.equals(gt.getGroupId());

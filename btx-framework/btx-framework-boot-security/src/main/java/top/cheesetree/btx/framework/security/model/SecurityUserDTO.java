@@ -1,6 +1,7 @@
 package top.cheesetree.btx.framework.security.model;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import top.cheesetree.btx.framework.core.exception.ExceptionCodeUtil;
 import top.cheesetree.btx.framework.core.model.ValueObject;
@@ -14,6 +15,7 @@ import java.util.List;
  */
 @Getter
 @Setter
+@NoArgsConstructor
 public abstract class SecurityUserDTO implements ValueObject {
     private String uid;
     private String hdUrl;
