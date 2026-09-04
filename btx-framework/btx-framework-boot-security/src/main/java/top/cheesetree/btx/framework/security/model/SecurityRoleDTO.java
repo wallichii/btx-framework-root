@@ -11,7 +11,7 @@ import top.cheesetree.btx.framework.core.model.ValueObject;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class SecurityRoleDTO implements ValueObject {
+public class SecurityRoleDTO implements ValueObject {
 
     private String roleId;
     private String roleCode;
