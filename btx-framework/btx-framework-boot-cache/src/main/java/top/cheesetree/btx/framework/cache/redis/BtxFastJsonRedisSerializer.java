@@ -2,6 +2,7 @@ package top.cheesetree.btx.framework.cache.redis;
 
 
 import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONReader;
 import com.alibaba.fastjson2.JSONWriter;
 import org.springframework.data.redis.serializer.RedisSerializer;
 import org.springframework.data.redis.serializer.SerializationException;
@@ -41,7 +42,7 @@ public class BtxFastJsonRedisSerializer<T extends Object> implements RedisSerial
             return null;
         }
         try {
-            return JSON.parseObject(new String(bytes, StandardCharsets.UTF_8), classType);
+            return JSON.parseObject(new String(bytes, StandardCharsets.UTF_8), classType, JSONReader.Feature.FieldBased);
         } catch (Exception ex) {
             throw new SerializationException("Could not deserialize: " + ex.getMessage(), ex);
         }
