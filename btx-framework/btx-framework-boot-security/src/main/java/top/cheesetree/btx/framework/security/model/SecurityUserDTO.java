@@ -16,7 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class SecurityUserDTO implements ValueObject {
+public class SecurityUserDTO implements ValueObject {
     private String uid;
     private String hdUrl;
     private String loginName;
@@ -29,7 +29,7 @@ public abstract class SecurityUserDTO implements ValueObject {
 
     @Override
     public boolean equals(Object obj) {
-        if (obj != null && obj instanceof SecurityUserDTO) {
+        if (obj instanceof SecurityUserDTO) {
             SecurityUserDTO gt = (SecurityUserDTO) obj;
             if (ExceptionCodeUtil.isNotBlank(this.uid)) {
                 return this.uid.equals(gt.getUid());

@@ -13,7 +13,7 @@ import top.cheesetree.btx.framework.core.model.ValueObject;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class SecurityAuthUserDTO<U extends SecurityUserDTO, T> implements ValueObject {
+public class SecurityAuthUserDTO<U extends SecurityUserDTO, T> implements ValueObject {
     private U user;
     private T authinfo;
 }

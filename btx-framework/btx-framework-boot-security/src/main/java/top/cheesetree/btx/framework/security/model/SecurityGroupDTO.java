@@ -14,7 +14,7 @@ import top.cheesetree.btx.framework.core.model.ValueObject;
 @Getter
 @Setter
 @NoArgsConstructor
-public abstract class SecurityGroupDTO implements ValueObject {
+public class SecurityGroupDTO implements ValueObject {
     private String groupId;
     private String pGroupId;
     private String groupCode; // 机构编码
