@@ -7,6 +7,8 @@ import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.AuthenticationException;
 import org.apache.shiro.authc.AuthenticationToken;
 import org.apache.shiro.mgt.RealmSecurityManager;
+import org.apache.shiro.session.InvalidSessionException;
+import org.apache.shiro.session.Session;
 import org.apache.shiro.subject.SimplePrincipalCollection;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +86,18 @@ public class BtxSecurityShiroOperation implements IBtxSecurityOperation {
         }
 
         try {
-            SecurityUtils.getSubject().login(t);
+            Subject subject = SecurityUtils.getSubject();
+            Session session = subject.getSession(false);
+            if (session != null) {
+                try {
+                    session.getAttribute("_probe_check");
+                    // 没抛异常 = 会话有效
+                    subject.logout();
+                } catch (InvalidSessionException e) {
+                    log.warn("旧会话已失效，sessionId:{}", session.getId());
+                }
+            }
+            subject.login(t);
 
             ret = new CommJSON<>((BtxShiroSecurityAuthUserDTO) SecurityUtils.getSubject().getPrincipals().getPrimaryPrincipal());
         } catch (AuthenticationException e) {
@@ -155,7 +168,18 @@ public class BtxSecurityShiroOperation implements IBtxSecurityOperation {
         }
         au.setUser(user);
         if (isSession) {
-            subject.runAs(new SimplePrincipalCollection(au, "user"));
+            if (subject.isRunAs()) {
+                // 先清掉残留
+                subject.releaseRunAs();
+            }
+            try {
+                subject.runAs(new SimplePrincipalCollection(au, "user"));
+                // 执行业务，此时getPrincipal是目标用户
+            } finally {
+                if (subject.isRunAs()) {
+                    subject.releaseRunAs();
+                }
+            }
         }
 
         if (btxShiroCacheProperties.isEnabled()) {
