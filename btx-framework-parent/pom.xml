@@ -28,7 +28,7 @@
         <com.alibaba.fastjson2.spring6.version>2.0.61</com.alibaba.fastjson2.spring6.version>
         <mybatis-plus-boot.version>3.5.16</mybatis-plus-boot.version>
         <cn.hutool.version>5.8.44</cn.hutool.version>
-        <org.apache.shiro.version>2.1.0</org.apache.shiro.version>
+        <org.apache.shiro.version>2.2.1</org.apache.shiro.version>
         <okhttp.version>5.2.3</okhttp.version>
         <org.yaml.snakeyaml.version>2.4</org.yaml.snakeyaml.version>
         <tomcat.embed.version>10.1.57</tomcat.embed.version>
