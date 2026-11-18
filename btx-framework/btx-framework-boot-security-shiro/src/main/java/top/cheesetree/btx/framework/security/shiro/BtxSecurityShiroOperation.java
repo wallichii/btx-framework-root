@@ -156,10 +156,21 @@ public class BtxSecurityShiroOperation<T extends BtxShiroSecurityUserDTO, A exte
             shiroRealm.clearUserAuthorization(au, tk);
         }
         au.setUser(user);
-        if (isSession) {
-            subject.runAs(new SimplePrincipalCollection(au, "user"));
-        }
 
+        if (isSession) {
+            if (subject.isRunAs()) {
+                // 先清掉残留
+                subject.releaseRunAs();
+            }
+            try {
+                subject.runAs(new SimplePrincipalCollection(au, "user"));
+                // 执行业务，此时getPrincipal是目标用户
+            } finally {
+                if (subject.isRunAs()) {
+                    subject.releaseRunAs();
+                }
+            }
+        }
         if (btxShiroCacheProperties.isEnabled()) {
             shiroRealm.setUserAuthenticationCache(au, tk);
         }
